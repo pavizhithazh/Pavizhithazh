@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="200" height="200" viewBox="0 0 200 200">
+ <circle cx="100" cy="100" r="100" fill="#5c0601"/>
+ <circle cx="100" cy="100" r="91" fill="none" stroke="#b8860b" stroke-width="3"/>
+ <g fill="#d95748" transform="translate(100 66)">
+  <circle cx="0" cy="-12" r="9"/><circle cx="11.4" cy="-3.7" r="9"/><circle cx="7" cy="9.7" r="9"/><circle cx="-7" cy="9.7" r="9"/><circle cx="-11.4" cy="-3.7" r="9"/>
+  <circle cx="0" cy="0" r="6" fill="#f5d88a"/>
+ </g>
+ <text x="100" y="124" text-anchor="middle" font-family="serif" font-size="32" font-weight="bold" fill="#f5d88a">பவிழிதழ்</text>
+ <text x="100" y="150" text-anchor="middle" font-family="serif" font-size="11" fill="#fff1cc">இலக்கிய காலாண்டு இதழ்</text>
+</svg>

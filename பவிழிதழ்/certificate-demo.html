@@ -1,0 +1,58 @@
+<!doctype html><html lang="ta"><head><meta charset="utf-8"><style>
+@page{size:A4 landscape;margin:7mm}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0;width:100%;min-height:100%;background:#eee8da;color:#493222;font-family:"Noto Serif Tamil","Latha",serif}
+.toolbar{height:14mm;display:flex;align-items:center;justify-content:center;padding:2mm}
+.toolbar button{padding:7px 20px;background:#632b28;color:#fff3d7;border:1px solid #b18a50;border-radius:4px;font:inherit;cursor:pointer}
+.certificate{--main:#76552d;--accent:#c49b52;--soft:#fff7e5;position:relative;width:283mm;height:196mm;margin:0 auto 10px;padding:0;overflow:hidden;text-align:center;background-color:#fff;background-repeat:no-repeat;background-position:center;background-size:100% 100%;border:0;outline:0;display:block;isolation:isolate}
+.certificate.theme-selection{background-image:url('images/certificate-selection.jpg')!important}
+.certificate.theme-participation{background-image:url('images/certificate-participation.jpg')!important}
+.certificate.theme-special{background-image:url('images/certificate-special.jpg')!important}
+.certificate.theme-winner{background-image:url('images/certificate-winner.jpg')!important}
+.certificate:before,.certificate:after,.corner{display:none!important;content:none!important}
+/* Keep every certificate element inside the artwork's inner frame. */
+.brand-head{position:absolute;top:25mm;left:35mm;right:35mm;height:18mm;margin:0!important;min-height:0!important;display:flex;align-items:center;justify-content:center;gap:5mm}
+.logo-row{display:flex;align-items:center;justify-content:center;gap:3mm;min-width:0;flex:0 0 auto}
+.org-logo{max-width:18mm;max-height:15mm;object-fit:contain}
+.partner-logo-wrap{display:flex;flex-direction:column;align-items:center;gap:1mm;min-width:0}
+.partner-logo{max-width:17mm;max-height:13mm;object-fit:contain}
+.partner-logo-wrap small{font-size:6pt;color:var(--main);max-width:25mm;overflow-wrap:anywhere}
+.brand-head>div:nth-child(2){text-align:center;min-width:0;max-width:72mm}
+.brand-center{font-size:17pt;line-height:1.2;letter-spacing:.3px;color:#fff4d8;font-weight:800;text-shadow:0 1px 2px #38251d;white-space:normal}
+.subtitle{font-size:7.5pt;line-height:1.25;color:#fff4d8;margin-top:1mm;text-shadow:0 1px 2px #38251d;letter-spacing:.2px}
+.partner-heading{position:absolute;right:0;top:0;max-width:35mm;font-size:7pt;color:var(--main);text-align:right;line-height:1.25;overflow-wrap:anywhere}
+.title{position:absolute;top:47mm;left:28mm;right:28mm;font-size:25pt;line-height:1.15;color:var(--main);margin:0!important;text-shadow:none}
+.type{position:absolute;top:59mm;left:28mm;right:28mm;font-size:12pt;line-height:1.25;color:var(--accent);font-weight:bold;margin:0!important}
+.level-tag{position:absolute;top:68mm;left:50%;transform:translateX(-50%);max-width:70%;font-size:7.5pt;line-height:1.2;color:var(--main);border:1px solid var(--accent);border-radius:99px;padding:1.2mm 6mm;white-space:normal}
+.intro{position:absolute;top:78mm;left:20mm;right:20mm;font-size:10pt;line-height:1.25;margin:0}
+.honorific-line{position:absolute;top:85mm;left:20mm;right:20mm;font-size:7.5pt;line-height:1.2;letter-spacing:.1px;color:#604b32;margin:0!important}
+.recipient{position:absolute;top:90mm;left:25mm;right:25mm;min-width:0;margin:0!important;padding:0 4mm 1.5mm;font-size:21pt;line-height:1.2;font-weight:bold;color:var(--main);border-bottom:1px solid var(--accent);overflow-wrap:anywhere}
+.message{position:absolute;top:105mm;left:42mm;right:42mm;max-height:20mm;overflow:hidden;font-size:9.5pt;line-height:1.4;white-space:pre-line;margin:0!important}
+.details{position:absolute;top:127mm;left:38mm;right:38mm;max-height:13mm;overflow:hidden;font-size:8pt;line-height:1.3;color:#493222;margin:0}
+.rank{font-weight:bold;color:var(--main);font-size:10pt}
+.seal-row{position:absolute;bottom:57mm;left:0;right:0;height:14mm;display:flex;justify-content:center;align-items:center;gap:8mm;margin:0}
+.seal-image{width:13mm;height:13mm;object-fit:contain}
+.partner-seal{width:12mm;height:12mm}
+.seal-placeholder{height:13mm;width:13mm;border:2px double var(--main);border-radius:50%;color:var(--main);display:flex;flex-direction:column;align-items:center;justify-content:center;background:rgba(153,54,45,.035);outline:1px dashed var(--accent);outline-offset:-2mm}
+.seal-placeholder b{font-size:6pt}.seal-placeholder i{font-size:8pt;font-style:normal;line-height:1}.seal-placeholder small{font-size:3.5pt;max-width:10mm;line-height:1}
+.signature-area{position:absolute;left:38mm;right:38mm;bottom:39mm;height:16mm;display:grid;grid-template-columns:repeat(var(--sign-count),minmax(0,1fr));align-items:end;gap:8mm;margin:0}
+.sign-block{min-width:0;text-align:center;font-size:7pt;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;line-height:1.15}
+.sign-image-slot{height:7mm;width:100%;display:flex;align-items:end;justify-content:center}
+.signature-image{max-height:6mm;max-width:60%;object-fit:contain}
+.sign-line{width:72%;border-top:1px solid var(--main);margin:1mm 0}
+.sign-block strong{font-size:7pt;color:var(--main);white-space:normal;overflow-wrap:anywhere;max-width:100%}
+.sign-block small{font-size:6pt;line-height:1.15;color:#765d43;max-width:100%;overflow-wrap:anywhere}
+.serial{position:absolute;bottom:29mm;left:34mm;max-width:75mm;font-size:6pt;color:#756148;text-align:left}
+.date{position:absolute;bottom:29mm;right:34mm;max-width:65mm;font-size:6pt;color:#756148;text-align:right}
+.registry-strip{position:absolute;bottom:36mm;left:30mm;right:30mm;display:flex;justify-content:center;gap:8mm;font-size:5.5pt;color:#765d43;flex-wrap:wrap}
+@media screen{.certificate{box-shadow:0 5px 25px #0002}}
+@media print{html,body{width:283mm;height:196mm;background:#fff}.toolbar{display:none!important}.certificate{margin:0!important;break-after:avoid;page-break-after:avoid;print-color-adjust:exact;-webkit-print-color-adjust:exact}}
+</style></head><body><main class="certificate theme-winner" style="--sign-count:2">
+<header class="brand-head"><div class="logo-row"><img class="org-logo" src="images/logo.svg"></div><div><div class="brand-center">பவிழிதழ்</div><div class="subtitle">காலாண்டு இலக்கிய இதழ்</div></div><div class="partner-heading"></div></header>
+<h1 class="title">சான்றிதழ்</h1><p class="type">வெற்றியாளர் சான்றிதழ்</p><div class="level-tag">வெற்றி · சிறந்த சாதனை</div>
+<p class="intro">இதன் மூலம் சான்றளிக்கப்படுவது:</p><div class="honorific-line">திரு. / திருமதி / செல்வி / செல்வன்</div><div class="recipient">தமிழ்ச்செல்வி</div>
+<p class="message">பவிழிதழ் நடத்திய தமிழ் இலக்கியப் போட்டியில் தங்களது படைப்பாற்றலையும் திறமையையும் வெளிப்படுத்தி முதல் பரிசு பெற்று வெற்றியடைந்தமைக்காக இச்சான்றிதழ் பெருமையுடன் வழங்கப்படுகிறது.</p>
+<div class="details"><strong>பவிழிதழ் 2027 கவிதைப் போட்டி</strong><br>படைப்பு: இயற்கையின் அழகு<br>பிரிவு: கவிதை<br><span class="rank">முதல் பரிசு</span><br>2027</div>
+<div class="seal-row"><div class="seal-placeholder"><b>பவிழிதழ்</b><i>✦</i><small>முத்திரை</small></div></div>
+<div class="signature-area"><section class="sign-block"><div class="sign-image-slot"></div><div class="sign-line"></div><strong>நடுவர் பெயர்</strong><small>நடுவர்</small></section><section class="sign-block"><div class="sign-image-slot"></div><div class="sign-line"></div><strong>செல்வி இரா.பவித்ரா</strong><small>நிறுவனர்</small></section></div>
+<div class="serial">சான்றிதழ் எண்: PAVI-2027-000001</div><div class="date">வழங்கிய நாள்: 09 நவம்பர் 2027</div></main></body></html>

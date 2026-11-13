@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="ta">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>சான்றிதழ்கள் - பவிழிதழ்</title>
+  <meta name="description" content="பவிழிதழ் வழங்கிய சான்றிதழ்களைப் பெயர் அல்லது சான்றிதழ் எண்ணால் தேடி PDF பதிவிறக்குங்கள்.">
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body data-category="certificates">
+  <button class="nav-toggle-btn" id="navToggleBtn">☰ பொருளடக்கம்</button>
+  <div class="drawer-overlay" id="drawerOverlay"></div>
+  <aside class="side-drawer" id="sideDrawer">
+    <div class="drawer-header"><h3>பொருளடக்கம்</h3><button class="close-btn" id="closeDrawerBtn">×</button></div>
+    <ul class="drawer-menu">
+      <li><a href="index.html">முகப்பு</a></li>
+      <li><a href="kavithai.html">கவிதைகள்</a></li>
+      <li><a href="kathai.html">சிறுகதைகள்</a></li>
+      <li><a href="katturai.html">கட்டுரைகள்</a></li>
+      <li><a href="aaivukatturai.html">ஆய்வுக் கட்டுரைகள்</a></li>
+      <li><a href="kulandhai.html">குழந்தை இலக்கியம்</a></li>
+      <li><a href="authors.html">எழுத்தாளர்கள்</a></li>
+      <li><a href="certificates.html" class="active">சான்றிதழ்கள்</a></li>
+      <li><a href="about.html">எங்களைப் பற்றி & தொடர்பு</a></li>
+    </ul>
+  </aside>
+  <header><div class="header-top"><div class="logo-container"><img id="siteLogo" src="images/logo.svg" alt="பவிழிதழ்"></div><div class="header-text"><h1 class="site-title">பவிழிதழ்</h1><div class="kural-box">படைப்பாற்றலுக்கான அங்கீகாரம்</div></div></div></header>
+  <main class="container certificate-public-page">
+    <p class="section-eyebrow">✦ படைப்பாளர்களின் அங்கீகாரப் பதிவேடு ✦</p>
+    <h2 class="page-heading">பவிழிதழ் சான்றிதழ்கள்</h2>
+    <p class="certificate-page-intro">பவிழிதழ் வழங்கிய தேர்வு, பங்கேற்பு, சிறப்புச் சான்றிதழ் மற்றும் வெற்றியாளர் சான்றிதழ்களைப் பெயர் அல்லது சான்றிதழ் எண்ணால் தேடிப் பெறலாம். Admin-ல் உருவாக்கப்பட்ட அதே நான்கு Template வடிவங்களிலும் சான்றிதழைப் பார்த்து PDF ஆகச் சேமிக்கலாம்.</p>
+    <section class="certificate-search-panel post-card">
+      <label>பெயர் / சான்றிதழ் எண் / நிகழ்ச்சி தேடல்<input id="certificateSearch" type="search" placeholder="பெயர் அல்லது சான்றிதழ் எண்ணை உள்ளிடவும்"></label>
+      <label>சான்றிதழ் வகை<select id="certificateTypeFilter"><option value="">அனைத்து வகைகளும்</option><option value="selection">தேர்வு / தேர்ந்தெடுக்கப்பட்ட படைப்புகள்</option><option value="participation">பங்கேற்புச் சான்றிதழ்</option><option value="special">சிறப்புநிலைச் சான்றிதழ்</option><option value="winner">வெற்றியாளர் சான்றிதழ்</option></select></label>
+      <p id="certificatePageStatus" class="admin-help" aria-live="polite">சான்றிதழ்கள் ஏற்றப்படுகின்றன…</p><p class="admin-help">சான்றிதழ் திறந்ததும் “அச்சிடு / PDF ஆகச் சேமி” என்பதை அழுத்தி, Save as PDF தேர்வு செய்யுங்கள். Admin-ல் பயன்படுத்தப்படும் அதே வடிவமைப்பே இங்கும் பயன்படுத்தப்படும்.</p>
+    </section>
+    <section id="publicCertificatesList" class="certificate-download-grid" aria-live="polite"><div class="coming-soon-box">சான்றிதழ்கள் ஏற்றப்படுகின்றன…</div></section>
+  </main>
+  <footer><p class="footer-founder"><strong>நிறுவனர் மற்றும் ஒருங்கிணைப்பாளர்:</strong> கவிஞர், எழுத்தாளர் செல்வி இரா.பவித்ரா</p><p class="footer-contact-standard">பவிழிதழ் குழுவினர்</p></footer>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="js/supabase-config.js"></script><script src="js/analytics-config.js"></script><script src="js/script.js"></script>
+</body>
+</html>
