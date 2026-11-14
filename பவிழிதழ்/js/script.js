@@ -288,7 +288,7 @@ async function showWebsiteUpdatedDate(){
     const date=await PaviDB.getWebsiteUpdatedDate();
     element.textContent=date?'இணையதள இறுதிப் புதுப்பிப்பு: '+formatTaDate(date):'இணையதள இறுதிப் புதுப்பிப்பு தேதி இன்னும் அமைக்கப்படவில்லை';
   }catch(error){
-    element.textContent='இணையதள இறுதிப் புதுப்பிப்பு தேதியைப் பெற முடியவில்லை';
+    element.textContent='தேதி வாசிப்புப் பிழை: '+(error?.message||String(error));
     console.error('Website updated date load failed:',error);
   }
 }
