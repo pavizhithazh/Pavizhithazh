@@ -8,33 +8,11 @@
 <section id="siteSettings" class="admin-section"><h2 class="page-heading">01 · பொதுவான தள அமைப்புகள்</h2><form id="siteSettingsForm" class="post-card admin-form-grid">
 <section class="admin-update">
   <h3>இணையதளப் புதுப்பிப்பு தேதி</h3>
-
   <label for="updateDate">இறுதியாகப் புதுப்பிக்கப்பட்ட தேதி</label>
   <input type="date" id="updateDate">
-
-  <button onclick="saveUpdateDate()">
-    தேதியைச் சேமிக்கவும்
-  </button>
-
-  <p id="saveMessage"></p>
+  <button type="button" class="admin-primary" id="saveUpdateDateBtn">தேதியைச் சேமிக்கவும்</button>
+  <p id="saveMessage" class="admin-status" aria-live="polite"></p>
 </section>
-
-<script>
-async function saveUpdateDate() {
-  const date = document.getElementById("updateDate").value;
-
-  if (!date) {
-    alert("தேதியைத் தேர்ந்தெடுக்கவும்");
-    return;
-  }
-
-  // இங்கு உங்கள் Database API மூலம்
-  // தேதியைச் சேமிக்க வேண்டும்.
-
-  document.getElementById("saveMessage").textContent =
-    "தேதி தேர்ந்தெடுக்கப்பட்டது: " + date;
-}
-</script>
 
 <label>இதழின் பெயர்<input id="settingSiteTitle" value="பவிழிதழ்"></label><label>லோகோ படம்<input id="settingLogoFile" type="file" accept="image/*"></label><label>முகப்பு திருக்குறள் / மேற்கோள்<input id="settingKural" placeholder="குறள் அல்லது மேற்கோள்"></label><label class="wide">மேல் அறிவிப்புப் பட்டை<input id="settingNotice" placeholder="இதழ் வெளியாகும் நாள் / அறிவிப்பு"></label><label>நிறுவனர் / ஆசிரியர் விவரம்<input id="settingFounder" placeholder="பெயர் மற்றும் பொறுப்பு"></label><label>தொடர்பு மின்னஞ்சல்<input id="settingEmail" type="email" value="pavizhithazh@gmail.com" placeholder="pavizhithazh@gmail.com"></label><label class="wide">அடிக்குறிப்பு உரை<textarea id="settingFooter" rows="3" placeholder="இதழைப் பற்றிய குறிப்பு"></textarea></label><label>GoatCounter Site Code<input id="settingGoatCounterCode" placeholder="எ.கா. pavizhidhal"><span class="admin-help-inline">Admin ஒருமுறை அமைத்த பிறகு பொதுவாசகர்களுக்கு பதிவு இணைப்பு காட்டப்படாது.</span></label><label>ISSN எண்<input id="settingIssnNumber" placeholder="ISSN 0000-0000"></label><label>Udyam / MSME எண்<input id="settingUdyamNumber" placeholder="UDYAM-XX-00-0000000"></label><label>ISSN லோகோ<input id="settingIssnLogoFile" type="file" accept="image/*"></label><label>Udyam / MSME லோகோ<input id="settingUdyamLogoFile" type="file" accept="image/*"></label><label>முதன்மை நிறம்<input id="settingPrimaryColor" type="color" value="#5c0601"></label><label>தங்க நிறம்<input id="settingGoldColor" type="color" value="#b8860b"></label><button class="admin-primary" type="submit">பொது அமைப்புகளைச் சேமி</button></form></section>
 <section id="pageEditor" class="admin-section"><h2 class="page-heading">02 · ஒவ்வொரு பக்கத்தையும் நீங்களே திருத்துங்கள்</h2><p class="admin-help">எந்தப் பக்கத்தை மாற்ற வேண்டும் என்பதைத் தேர்ந்தெடுத்து, தலைப்பு மற்றும் அறிமுக உரையை எழுதுங்கள்.</p><form id="pageEditorForm" class="post-card admin-form-grid"><label>திருத்த வேண்டிய பக்கம்<select id="editPage"><option value="home">முகப்புப் பக்கம்</option><option value="kavithai">கவிதைகள்</option><option value="kathai">சிறுகதைகள்</option><option value="katturai">கட்டுரைகள்</option><option value="aaivukatturai">ஆய்வுக் கட்டுரைகள்</option><option value="kulandhai">குழந்தை இலக்கியம்</option><option value="authors_list">எழுத்தாளர்கள்</option><option value="about">எங்களைப் பற்றி</option></select></label><label>பக்கத் தலைப்பு<input id="editPageTitle" required></label><label class="wide">பக்க அறிமுகம் / விளக்கம்<textarea id="editPageIntro" rows="5" placeholder="இந்தப் பக்கத்தில் வாசகர்கள் காண வேண்டிய அறிமுக உரை"></textarea></label><button class="admin-primary" type="submit">இந்தப் பக்கத்தைச் சேமி</button><span id="pageSaveStatus" class="admin-status" aria-live="polite"></span></form></section>
