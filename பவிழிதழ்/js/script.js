@@ -43,6 +43,8 @@ const PaviDB = (() => {
   async function deleteComment(id){const {error}=await client().from('comments').delete().eq('id',String(id));fail(error);}
   async function approveComment(id){const {error}=await client().from('comments').update({approved:true}).eq('id',String(id));fail(error);}
   async function saveSetting(key,value){const {error}=await client().from('site_settings').upsert({setting_key:key,setting_value:value,updated_at:new Date().toISOString()},{onConflict:'setting_key'});fail(error);}
+  async function getWebsiteUpdatedDate(){const {data,error}=await client().from('site_settings').select('setting_value').eq('setting_key','website_updated_date').maybeSingle();fail(error);return typeof data?.setting_value==='string'?data.setting_value:'';}
+  async function saveWebsiteUpdatedDate(date){await saveSetting('website_updated_date',date);return date;}
   async function upload(file,bucket){const clean=file.name.replace(/[^a-zA-Z0-9._-]/g,'_');const path=`${Date.now()}-${Math.random().toString(36).slice(2)}-${clean}`;const {error}=await client().storage.from(bucket).upload(path,file,{upsert:false,contentType:file.type||'application/octet-stream'});fail(error);const {data}=client().storage.from(bucket).getPublicUrl(path);return data.publicUrl;}
   const CERTIFICATE_BUCKET='pavizhidhal-certificates';
   async function uploadCertificateFile(file){
@@ -74,7 +76,7 @@ const PaviDB = (() => {
   async function login(email,password){const {data,error}=await client().auth.signInWithPassword({email,password});fail(error);const {data:allowed,error:ae}=await client().rpc('pavizhidhal_is_admin');if(ae || allowed!==true){await client().auth.signOut();throw new Error('இந்தக் கணக்கிற்கு Admin அனுமதி இல்லை. admin_users அட்டவணையில் user_id சேர்க்கப்பட்டுள்ளதா பார்க்கவும்.');}return data;}
   async function logout(){const {error}=await client().auth.signOut();fail(error);}
   async function isAdmin(){const {data:{session}}=await client().auth.getSession();if(!session)return false;const {data,error}=await client().rpc('pavizhidhal_is_admin');return !error && data===true;}
-  return {init,refreshPosts,loadComments,savePosts,deletePost,addComment,deleteComment,approveComment,saveSetting,upload,uploadCertificateFile,removeCertificateFile,certificatePublicUrl,listCertificateFiles,createCertificateFileRecord,setCertificatePublished,deleteCertificateFileRecord,login,logout,isAdmin};
+  return {init,refreshPosts,loadComments,savePosts,deletePost,addComment,deleteComment,approveComment,saveSetting,getWebsiteUpdatedDate,saveWebsiteUpdatedDate,upload,uploadCertificateFile,removeCertificateFile,certificatePublicUrl,listCertificateFiles,createCertificateFileRecord,setCertificatePublished,deleteCertificateFileRecord,login,logout,isAdmin};
 })();
 
 async function persistPaviSetting(localKey, value) {
@@ -168,7 +170,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   if(contactForm) contactForm.addEventListener('submit',e=>{e.preventDefault();const fd=new FormData(contactForm);const subject=`பவிழிதழ் தொடர்பு – ${fd.get('reason')||'பொதுத் தொடர்பு'}`;const body=`பெயர்: ${fd.get('name')}\nதொலைபேசி: ${fd.get('phone')||'குறிப்பிடப்படவில்லை'}\nமின்னஞ்சல்: ${fd.get('email')}\nவகை: ${fd.get('reason')}\n\nசெய்தி:\n${fd.get('message')}`;location.href=`mailto:pavizhithazh@gmail.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;});
   applySavedSiteSettings();
   renderIssueDownloadLink();
-  if (pageCategory !== 'admin') { injectSubmissionNotice(); upgradePublicFooter(); initVisitorStats(); }
+  if (pageCategory !== 'admin') { injectSubmissionNotice(); upgradePublicFooter(); showWebsiteUpdatedDate(); initVisitorStats(); }
   if (pageCategory === 'admin') {
     initAdminPanel();
   } else if (pageCategory === 'read') {
@@ -253,6 +255,18 @@ function loadSocialLinks(){
   [['footerWa','wa'],['footerFb','fb'],['footerInsta','insta'],['footerYt','yt']].forEach(([id,key])=>setLink(document.getElementById(id),key));
   document.querySelectorAll('.social-icon-link[data-social]').forEach(el=>setLink(el,el.dataset.social));
   document.querySelectorAll('.social-icon-bar').forEach(nav=>{nav.hidden=!Array.from(nav.querySelectorAll('.social-icon-link')).some(link=>!link.hidden);});
+}
+async function showWebsiteUpdatedDate(){
+  if(document.body.dataset.category==='admin')return;
+  try{
+    const date=await PaviDB.getWebsiteUpdatedDate();
+    if(!date)return;
+    const footer=document.querySelector('footer');
+    if(!footer)return;
+    let element=document.getElementById('websiteUpdatedDate');
+    if(!element){element=document.createElement('p');element.id='websiteUpdatedDate';element.className='website-updated-date';footer.appendChild(element);}
+    element.textContent='இணையதள இறுதிப் புதுப்பிப்பு: '+new Date(date+'T00:00:00').toLocaleDateString('ta-IN',{timeZone:'Asia/Kolkata'});
+  }catch(error){console.warn('இறுதிப் புதுப்பிப்பு தேதி:',error);}
 }
 function ensureSiteTagline(category){
   if(category==='admin')return;
@@ -919,6 +933,19 @@ async function initAdminDashboard(){
   const $=id=>document.getElementById(id);
   const setValue=(id,value)=>{const el=$(id);if(el)el.value=value??'';};
   const site=getSiteSettings();
+  const updateDateInput=$('updateDate'),updateDateButton=$('saveUpdateDateBtn'),updateDateStatus=$('saveMessage');
+  if(updateDateInput){
+    try{updateDateInput.value=await PaviDB.getWebsiteUpdatedDate();}catch(err){if(updateDateStatus)updateDateStatus.textContent='தேதியைப் பெற முடியவில்லை: '+(err.message||err);}
+  }
+  if(updateDateButton)updateDateButton.addEventListener('click',async()=>{
+    const date=updateDateInput?.value||'';
+    if(!date){alert('தேதியைத் தேர்ந்தெடுக்கவும்');return;}
+    updateDateButton.disabled=true;updateDateButton.textContent='சேமிக்கப்படுகிறது…';
+    if(updateDateStatus)updateDateStatus.textContent='';
+    try{await PaviDB.saveWebsiteUpdatedDate(date);if(updateDateStatus)updateDateStatus.textContent='தேதி Supabase-ல் சேமிக்கப்பட்டது ✓';}
+    catch(err){if(updateDateStatus)updateDateStatus.textContent='சேமிக்க முடியவில்லை: '+(err.message||err);alert('தேதியைச் சேமிக்க முடியவில்லை: '+(err.message||err));}
+    finally{updateDateButton.disabled=false;updateDateButton.textContent='தேதியைச் சேமிக்கவும்';}
+  });
   ['siteTitle','kural','notice','founder','footer'].forEach(k=>setValue('setting'+k[0].toUpperCase()+k.slice(1),site[k]||''));setValue('settingEmail','pavizhithazh@gmail.com');setValue('settingGoatCounterCode',site.goatCounterCode||'');setValue('settingIssnNumber',site.issnNumber||'');setValue('settingUdyamNumber',site.udyamNumber||'');
   setValue('settingPrimaryColor',site.primaryColor||'#5c0601');setValue('settingGoldColor',site.goldColor||'#b8860b');
   const pageDefaults={home:['பவிழிதழ் – காலாண்டு இலக்கிய இல்லம்','மூன்று மாதங்களுக்கு ஒருமுறை, மரபின் வேரும் புதுமையின் சிறகும் இணையும் தமிழ் படைப்புகள் உங்கள் வாசிப்பிற்கு மலர்கின்றன.'],kavithai:['கவிதைகள்','பழம்பெரும் கவிதை ஏட்டின் வாசிப்பு நயத்தில் கவிதைகளை வாசியுங்கள்.'],kathai:['சிறுகதைகள்','பழங்காலக் கதை ஏட்டின் உணர்வில் சிறுகதைகளை வாசியுங்கள்.'],katturai:['கட்டுரைகள்','பழமையான ஏட்டுத் தாள் வடிவில் சிந்தனைக் கட்டுரைகள்.'],aaivukatturai:['ஆய்வுக் கட்டுரைகள்','செப்பேட்டு ஆவண நயத்தில் ஆய்வுப் படைப்புகள்.'],kulandhai:['குழந்தை இலக்கியம்','வண்ணமயமான ஏட்டில் குழந்தைகளுக்கான படைப்புகள்.'],authors_list:['எழுத்தாளர்கள்','பவிழிதழில் எழுதும் படைப்பாளர்களை அறிந்துகொள்ளுங்கள்.'],about:['எங்களைப் பற்றி','பவிழிதழின் நோக்கம், காலாண்டு வெளியீடுகள், விருதுகள் மற்றும் தொடர்பு விவரங்கள்.']};
