@@ -49,16 +49,16 @@ const PaviDB = (() => {
     const {data:dateRow,error:dateError}=await db.from('site_settings').select('setting_value').eq('setting_key','website_updated_date').maybeSingle();
     fail(dateError);
     const separate=parseValue(dateRow?.setting_value);
-    if(typeof separate==='string' && /^\\d{4}-\\d{2}-\\d{2}$/.test(separate))return separate;
+    if(typeof separate==='string' && /^\d{4}-\d{2}-\d{2}$/.test(separate))return separate;
     const {data:siteRow,error:siteError}=await db.from('site_settings').select('setting_value').eq('setting_key','site').maybeSingle();
     fail(siteError);
     const site=parseValue(siteRow?.setting_value);
     const date=site&&typeof site==='object'?site.websiteUpdatedDate:'';
-    if(typeof date==='string'&&/^\\d{4}-\\d{2}-\\d{2}$/.test(date))return date;
+    if(typeof date==='string'&&/^\d{4}-\d{2}-\d{2}$/.test(date))return date;
     return '';
   }
   async function saveWebsiteUpdatedDate(date){
-    if(!/^\\d{4}-\\d{2}-\\d{2}$/.test(date))throw new Error('தேதி சரியான வடிவில் இல்லை.');
+    if(!/^\d{4}-\d{2}-\d{2}$/.test(date))throw new Error('தேதி சரியான வடிவில் இல்லை.');
     const current=JSON.parse(localStorage.getItem('pavizhidhal_site_settings')||'{}');
     const next={...current,websiteUpdatedDate:date};
     await saveSetting('site',next);
