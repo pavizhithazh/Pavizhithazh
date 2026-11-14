@@ -43,8 +43,29 @@ const PaviDB = (() => {
   async function deleteComment(id){const {error}=await client().from('comments').delete().eq('id',String(id));fail(error);}
   async function approveComment(id){const {error}=await client().from('comments').update({approved:true}).eq('id',String(id));fail(error);}
   async function saveSetting(key,value){const {error}=await client().from('site_settings').upsert({setting_key:key,setting_value:value,updated_at:new Date().toISOString()},{onConflict:'setting_key'});fail(error);}
-  async function getWebsiteUpdatedDate(){const current=JSON.parse(localStorage.getItem('pavizhidhal_site_settings')||'{}');return typeof current.websiteUpdatedDate==='string'?current.websiteUpdatedDate:'';}
-  async function saveWebsiteUpdatedDate(date){const current=JSON.parse(localStorage.getItem('pavizhidhal_site_settings')||'{}');const next={...current,websiteUpdatedDate:date};await saveSetting('site',next);localStorage.setItem('pavizhidhal_site_settings',JSON.stringify(next));return date;}
+  async function getWebsiteUpdatedDate(){
+    const db=client();
+    const parseValue=value=>{if(typeof value==='string'){try{return JSON.parse(value);}catch(_){return value;}}return value;};
+    const {data:dateRow,error:dateError}=await db.from('site_settings').select('setting_value').eq('setting_key','website_updated_date').maybeSingle();
+    fail(dateError);
+    const separate=parseValue(dateRow?.setting_value);
+    if(typeof separate==='string' && /^\\d{4}-\\d{2}-\\d{2}$/.test(separate))return separate;
+    const {data:siteRow,error:siteError}=await db.from('site_settings').select('setting_value').eq('setting_key','site').maybeSingle();
+    fail(siteError);
+    const site=parseValue(siteRow?.setting_value);
+    const date=site&&typeof site==='object'?site.websiteUpdatedDate:'';
+    if(typeof date==='string'&&/^\\d{4}-\\d{2}-\\d{2}$/.test(date))return date;
+    return '';
+  }
+  async function saveWebsiteUpdatedDate(date){
+    if(!/^\\d{4}-\\d{2}-\\d{2}$/.test(date))throw new Error('தேதி சரியான வடிவில் இல்லை.');
+    const current=JSON.parse(localStorage.getItem('pavizhidhal_site_settings')||'{}');
+    const next={...current,websiteUpdatedDate:date};
+    await saveSetting('site',next);
+    await saveSetting('website_updated_date',date);
+    localStorage.setItem('pavizhidhal_site_settings',JSON.stringify(next));
+    return date;
+  }
   async function upload(file,bucket){const clean=file.name.replace(/[^a-zA-Z0-9._-]/g,'_');const path=`${Date.now()}-${Math.random().toString(36).slice(2)}-${clean}`;const {error}=await client().storage.from(bucket).upload(path,file,{upsert:false,contentType:file.type||'application/octet-stream'});fail(error);const {data}=client().storage.from(bucket).getPublicUrl(path);return data.publicUrl;}
   const CERTIFICATE_BUCKET='pavizhidhal-certificates';
   async function uploadCertificateFile(file){
@@ -258,14 +279,18 @@ function loadSocialLinks(){
 }
 async function showWebsiteUpdatedDate(){
   if(document.body.dataset.category==='admin')return;
-  const date=PaviDB.getWebsiteUpdatedDate();
-  if(!date)return;
   const footer=document.querySelector('footer');
   if(!footer)return;
   let element=document.getElementById('websiteUpdatedDate');
   if(!element){element=document.createElement('p');element.id='websiteUpdatedDate';element.className='website-updated-date';footer.appendChild(element);}
-  element.textContent='இணையதள இறுதிப் புதுப்பிப்பு: '+formatTaDate(date);
   element.style.cssText='display:block!important;visibility:visible!important;opacity:1!important;text-align:center;margin:12px auto;padding:8px 12px;color:inherit;font-size:14px;line-height:1.6;';
+  try{
+    const date=await PaviDB.getWebsiteUpdatedDate();
+    element.textContent=date?'இணையதள இறுதிப் புதுப்பிப்பு: '+formatTaDate(date):'இணையதள இறுதிப் புதுப்பிப்பு தேதி இன்னும் அமைக்கப்படவில்லை';
+  }catch(error){
+    element.textContent='இணையதள இறுதிப் புதுப்பிப்பு தேதியைப் பெற முடியவில்லை';
+    console.error('Website updated date load failed:',error);
+  }
 }
 function ensureSiteTagline(category){
   if(category==='admin')return;
