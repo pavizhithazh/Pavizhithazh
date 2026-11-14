@@ -36,9 +36,6 @@
 </div>
 </div>
 </header>
-<main class="container">
-<h2 class="page-heading">கட்டுரைகள்</h2>
-      
 <div class="paviz-update-info">
   <span>◷</span>
   இணையதள இறுதிப் புதுப்பிப்பு:
@@ -57,30 +54,28 @@
 
 <script>
 async function loadWebsiteUpdateDate() {
+  const dateElement = document.getElementById("websiteUpdateDate");
+  if (!dateElement) return;
   try {
-    // Database API-யிலிருந்து தேதியைப் பெற வேண்டும்
-    const response = await fetch(
-      "/api/website-update-date"
-    );
-
-    const data = await response.json();
-
-    const date = new Date(
-      data.updatedDate + "T00:00:00"
-    );
-
-    document.getElementById(
-      "websiteUpdateDate"
-    ).textContent = date.toLocaleDateString("ta-IN");
+    const updatedDate = await PaviDB.getWebsiteUpdatedDate();
+    if (!updatedDate) {
+      dateElement.textContent = "தகவல் கிடைக்கவில்லை";
+      return;
+    }
+    const date = new Date(updatedDate + "T00:00:00");
+    dateElement.textContent = date.toLocaleDateString("ta-IN");
   } catch (error) {
-    document.getElementById(
-      "websiteUpdateDate"
-    ).textContent = "தகவல் கிடைக்கவில்லை";
+    console.error("Website update date:", error);
+    dateElement.textContent = "தகவல் கிடைக்கவில்லை";
   }
 }
-
-loadWebsiteUpdateDate();
+window.addEventListener("load", loadWebsiteUpdateDate);
 </script>
+
+<main class="container">
+<h2 class="page-heading">கட்டுரைகள்</h2>
+      
+
 
 <div class="coming-soon-box" id="comingSoonBox">
 <h2>Coming Soon...</h2>
