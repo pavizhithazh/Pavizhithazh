@@ -12,6 +12,42 @@
 <h1 class="site-title">பவிழிதழ்</h1>
 <p style="text-align:center"><a href="index.html">முகப்பு</a> · <a href="certificates.html">சான்றிதழ்கள்</a></p>
 </header>
+<div class="paviz-update-info">
+  <span>◷</span>
+  இணையதள இறுதிப் புதுப்பிப்பு:
+  <time id="websiteUpdateDate">ஏற்றப்படுகிறது...</time>
+</div>
+
+<style>
+.paviz-update-info {
+  text-align: center;
+  font-size: 11px;
+  color: #888;
+  padding: 7px;
+  margin: 5px auto;
+}
+</style>
+
+<script>
+async function loadWebsiteUpdateDate() {
+  const dateElement = document.getElementById("websiteUpdateDate");
+  if (!dateElement) return;
+  try {
+    const updatedDate = await PaviDB.getWebsiteUpdatedDate();
+    if (!updatedDate) {
+      dateElement.textContent = "தகவல் கிடைக்கவில்லை";
+      return;
+    }
+    const date = new Date(updatedDate + "T00:00:00");
+    dateElement.textContent = date.toLocaleDateString("ta-IN");
+  } catch (error) {
+    console.error("Website update date:", error);
+    dateElement.textContent = "தகவல் கிடைக்கவில்லை";
+  }
+}
+window.addEventListener("load", loadWebsiteUpdateDate);
+</script>
+
 <main class="container">
 <h2 class="page-heading" id="authorTitle">எழுத்தாளரின் படைப்புகள்</h2>
 <div id="authorPostsContainer"></div>
