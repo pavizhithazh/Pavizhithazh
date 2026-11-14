@@ -202,7 +202,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   if(contactForm) contactForm.addEventListener('submit',e=>{e.preventDefault();const fd=new FormData(contactForm);const subject=`பவிழிதழ் தொடர்பு – ${fd.get('reason')||'பொதுத் தொடர்பு'}`;const body=`பெயர்: ${fd.get('name')}\nதொலைபேசி: ${fd.get('phone')||'குறிப்பிடப்படவில்லை'}\nமின்னஞ்சல்: ${fd.get('email')}\nவகை: ${fd.get('reason')}\n\nசெய்தி:\n${fd.get('message')}`;location.href=`mailto:pavizhithazh@gmail.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;});
   applySavedSiteSettings();
   renderIssueDownloadLink();
-  if (pageCategory !== 'admin') { injectSubmissionNotice(); upgradePublicFooter(); showWebsiteUpdatedDate(); initVisitorStats(); }
+  if (pageCategory !== 'admin') { injectSubmissionNotice(); upgradePublicFooter(); initVisitorStats(); }
   if (pageCategory === 'admin') {
     initAdminPanel();
   } else if (pageCategory === 'read') {
@@ -287,21 +287,6 @@ function loadSocialLinks(){
   [['footerWa','wa'],['footerFb','fb'],['footerInsta','insta'],['footerYt','yt']].forEach(([id,key])=>setLink(document.getElementById(id),key));
   document.querySelectorAll('.social-icon-link[data-social]').forEach(el=>setLink(el,el.dataset.social));
   document.querySelectorAll('.social-icon-bar').forEach(nav=>{nav.hidden=!Array.from(nav.querySelectorAll('.social-icon-link')).some(link=>!link.hidden);});
-}
-async function showWebsiteUpdatedDate(){
-  if(document.body.dataset.category==='admin')return;
-  const footer=document.querySelector('footer');
-  if(!footer)return;
-  let element=document.getElementById('websiteUpdatedDate');
-  if(!element){element=document.createElement('p');element.id='websiteUpdatedDate';element.className='website-updated-date';footer.appendChild(element);}
-  element.style.cssText='display:block!important;visibility:visible!important;opacity:1!important;text-align:center;margin:12px auto;padding:8px 12px;color:inherit;font-size:14px;line-height:1.6;';
-  try{
-    const date=await PaviDB.getWebsiteUpdatedDate();
-    element.textContent=date?'இணையதள இறுதிப் புதுப்பிப்பு: '+formatTaDate(date):'இணையதள இறுதிப் புதுப்பிப்பு தேதி இன்னும் அமைக்கப்படவில்லை';
-  }catch(error){
-    element.textContent='தேதி வாசிப்புப் பிழை: '+(error?.message||String(error));
-    console.error('Website updated date load failed:',error);
-  }
 }
 function ensureSiteTagline(category){
   if(category==='admin')return;
