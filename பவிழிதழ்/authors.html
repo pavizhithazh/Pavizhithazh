@@ -38,6 +38,50 @@
 </header>
 <main class="container">
 <h2 class="page-heading">எழுத்தாளர்கள்</h2>
+      
+<div class="paviz-update-info">
+  <span>◷</span>
+  இணையதள இறுதிப் புதுப்பிப்பு:
+  <time id="websiteUpdateDate">ஏற்றப்படுகிறது...</time>
+</div>
+
+<style>
+.paviz-update-info {
+  text-align: center;
+  font-size: 11px;
+  color: #888;
+  padding: 7px;
+  margin: 5px auto;
+}
+</style>
+
+<script>
+async function loadWebsiteUpdateDate() {
+  try {
+    // Database API-யிலிருந்து தேதியைப் பெற வேண்டும்
+    const response = await fetch(
+      "/api/website-update-date"
+    );
+
+    const data = await response.json();
+
+    const date = new Date(
+      data.updatedDate + "T00:00:00"
+    );
+
+    document.getElementById(
+      "websiteUpdateDate"
+    ).textContent = date.toLocaleDateString("ta-IN");
+  } catch (error) {
+    document.getElementById(
+      "websiteUpdateDate"
+    ).textContent = "தகவல் கிடைக்கவில்லை";
+  }
+}
+
+loadWebsiteUpdateDate();
+</script>
+
 <div id="authorsContainer"></div>
 </main>
 <footer><p class="footer-founder"><strong>நிறுவனர் மற்றும் ஒருங்கிணைப்பாளர்:</strong> கவிஞர், எழுத்தாளர் செல்வி இரா.பவித்ரா</p><p class="footer-contact-standard">பவிழிதழ் குழுவினர்</p><p style="font-size:0.8rem;">© 2026 பவிழிதழ்.</p></footer>
