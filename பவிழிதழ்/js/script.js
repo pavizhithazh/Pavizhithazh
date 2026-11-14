@@ -44,17 +44,28 @@ const PaviDB = (() => {
   async function approveComment(id){const {error}=await client().from('comments').update({approved:true}).eq('id',String(id));fail(error);}
   async function saveSetting(key,value){const {error}=await client().from('site_settings').upsert({setting_key:key,setting_value:value,updated_at:new Date().toISOString()},{onConflict:'setting_key'});fail(error);}
   async function getWebsiteUpdatedDate(){
-    const db=client();
     const parseValue=value=>{if(typeof value==='string'){try{return JSON.parse(value);}catch(_){return value;}}return value;};
-    const {data:dateRow,error:dateError}=await db.from('site_settings').select('setting_value').eq('setting_key','website_updated_date').maybeSingle();
-    fail(dateError);
-    const separate=parseValue(dateRow?.setting_value);
-    if(typeof separate==='string' && /^\d{4}-\d{2}-\d{2}$/.test(separate))return separate;
+    // The regular site settings row is already loaded for public visitors by init().
+    const cached=parseValue(localStorage.getItem('pavizhidhal_site_settings')||'{}');
+    const cachedDate=cached&&typeof cached==='object'?cached.websiteUpdatedDate:'';
+    if(typeof cachedDate==='string' && /^\d{4}-\d{2}-\d{2}$/.test(cachedDate))return cachedDate;
+    const db=client();
     const {data:siteRow,error:siteError}=await db.from('site_settings').select('setting_value').eq('setting_key','site').maybeSingle();
-    fail(siteError);
-    const site=parseValue(siteRow?.setting_value);
-    const date=site&&typeof site==='object'?site.websiteUpdatedDate:'';
-    if(typeof date==='string'&&/^\d{4}-\d{2}-\d{2}$/.test(date))return date;
+    if(!siteError){
+      const site=parseValue(siteRow?.setting_value);
+      const date=site&&typeof site==='object'?site.websiteUpdatedDate:'';
+      if(typeof date==='string' && /^\d{4}-\d{2}-\d{2}$/.test(date))return date;
+    } else {
+      console.warn('Site settings date lookup:',siteError);
+    }
+    // Compatibility fallback for installs that already saved a separate date row.
+    const {data:dateRow,error:dateError}=await db.from('site_settings').select('setting_value').eq('setting_key','website_updated_date').maybeSingle();
+    if(!dateError){
+      const date=parseValue(dateRow?.setting_value);
+      if(typeof date==='string' && /^\d{4}-\d{2}-\d{2}$/.test(date))return date;
+    } else {
+      console.warn('Separate date lookup:',dateError);
+    }
     return '';
   }
   async function saveWebsiteUpdatedDate(date){
