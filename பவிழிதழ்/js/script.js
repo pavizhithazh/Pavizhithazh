@@ -43,8 +43,8 @@ const PaviDB = (() => {
   async function deleteComment(id){const {error}=await client().from('comments').delete().eq('id',String(id));fail(error);}
   async function approveComment(id){const {error}=await client().from('comments').update({approved:true}).eq('id',String(id));fail(error);}
   async function saveSetting(key,value){const {error}=await client().from('site_settings').upsert({setting_key:key,setting_value:value,updated_at:new Date().toISOString()},{onConflict:'setting_key'});fail(error);}
-  async function getWebsiteUpdatedDate(){const {data,error}=await client().from('site_settings').select('setting_value').eq('setting_key','website_updated_date').maybeSingle();fail(error);return typeof data?.setting_value==='string'?data.setting_value:'';}
-  async function saveWebsiteUpdatedDate(date){await saveSetting('website_updated_date',date);return date;}
+  async function getWebsiteUpdatedDate(){const current=JSON.parse(localStorage.getItem('pavizhidhal_site_settings')||'{}');return typeof current.websiteUpdatedDate==='string'?current.websiteUpdatedDate:'';}
+  async function saveWebsiteUpdatedDate(date){const current=JSON.parse(localStorage.getItem('pavizhidhal_site_settings')||'{}');const next={...current,websiteUpdatedDate:date};await saveSetting('site',next);localStorage.setItem('pavizhidhal_site_settings',JSON.stringify(next));return date;}
   async function upload(file,bucket){const clean=file.name.replace(/[^a-zA-Z0-9._-]/g,'_');const path=`${Date.now()}-${Math.random().toString(36).slice(2)}-${clean}`;const {error}=await client().storage.from(bucket).upload(path,file,{upsert:false,contentType:file.type||'application/octet-stream'});fail(error);const {data}=client().storage.from(bucket).getPublicUrl(path);return data.publicUrl;}
   const CERTIFICATE_BUCKET='pavizhidhal-certificates';
   async function uploadCertificateFile(file){
@@ -258,15 +258,14 @@ function loadSocialLinks(){
 }
 async function showWebsiteUpdatedDate(){
   if(document.body.dataset.category==='admin')return;
-  try{
-    const date=await PaviDB.getWebsiteUpdatedDate();
-    if(!date)return;
-    const footer=document.querySelector('footer');
-    if(!footer)return;
-    let element=document.getElementById('websiteUpdatedDate');
-    if(!element){element=document.createElement('p');element.id='websiteUpdatedDate';element.className='website-updated-date';footer.appendChild(element);}
-    element.textContent='இணையதள இறுதிப் புதுப்பிப்பு: '+new Date(date+'T00:00:00').toLocaleDateString('ta-IN',{timeZone:'Asia/Kolkata'});
-  }catch(error){console.warn('இறுதிப் புதுப்பிப்பு தேதி:',error);}
+  const date=PaviDB.getWebsiteUpdatedDate();
+  if(!date)return;
+  const footer=document.querySelector('footer');
+  if(!footer)return;
+  let element=document.getElementById('websiteUpdatedDate');
+  if(!element){element=document.createElement('p');element.id='websiteUpdatedDate';element.className='website-updated-date';footer.appendChild(element);}
+  element.textContent='இணையதள இறுதிப் புதுப்பிப்பு: '+formatTaDate(date);
+  element.style.cssText='display:block!important;visibility:visible!important;opacity:1!important;text-align:center;margin:12px auto;padding:8px 12px;color:inherit;font-size:14px;line-height:1.6;';
 }
 function ensureSiteTagline(category){
   if(category==='admin')return;
