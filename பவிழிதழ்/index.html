@@ -39,6 +39,42 @@
 </div>
 <div class="issue-notice">📜 தமிழ் இலக்கிய காலாண்டு இதழ் | மார்ச் · ஜூன் · செப்டம்பர் · டிசம்பர் | ஒவ்வொரு காலாண்டின் இறுதி ஞாயிற்றுக்கிழமையும் புதிய இதழ்.</div>
 </header>
+<div class="paviz-update-info">
+  <span>◷</span>
+  இணையதள இறுதிப் புதுப்பிப்பு:
+  <time id="websiteUpdateDate">ஏற்றப்படுகிறது...</time>
+</div>
+
+<style>
+.paviz-update-info {
+  text-align: center;
+  font-size: 11px;
+  color: #888;
+  padding: 7px;
+  margin: 5px auto;
+}
+</style>
+
+<script>
+async function loadWebsiteUpdateDate() {
+  const dateElement = document.getElementById("websiteUpdateDate");
+  if (!dateElement) return;
+  try {
+    const updatedDate = await PaviDB.getWebsiteUpdatedDate();
+    if (!updatedDate) {
+      dateElement.textContent = "தகவல் கிடைக்கவில்லை";
+      return;
+    }
+    const date = new Date(updatedDate + "T00:00:00");
+    dateElement.textContent = date.toLocaleDateString("ta-IN");
+  } catch (error) {
+    console.error("Website update date:", error);
+    dateElement.textContent = "தகவல் கிடைக்கவில்லை";
+  }
+}
+window.addEventListener("load", loadWebsiteUpdateDate);
+</script>
+
       
 <!-- Pavizhidhal Publication Notice -->
 <div class="paviz-notice">
