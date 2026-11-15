@@ -6,58 +6,39 @@
 <title>பவிழிதழ் – காலாண்டு இதழ்</title>
 <link rel="stylesheet" href="css/styles.css">
 <style>
-:root{color-scheme:light;--wine:#632b28;--wine-dark:#48201f;--gold:#b18a50;--gold-light:#dfcfad;--ink:#34251a;--paper:#fffdf7;--cream:#f4eddf}
-*{box-sizing:border-box}
-html{scroll-behavior:smooth}
-body{margin:0;background:#e9dfcb;color:var(--ink);font-family:"Noto Serif Tamil","Latha",serif}
+:root{color-scheme:light;--navy:#17324d;--teal:#167c80;--teal-soft:#e7f4f1;--coral:#d66a58;--gold:#d5a84f;--ink:#263746;--paper:#fffefa;--canvas:#e8eef3}
+*{box-sizing:border-box}html{scroll-behavior:smooth}
+body{margin:0;background:var(--canvas);color:var(--ink);font-family:"Noto Serif Tamil","Latha",serif}
 .print-toolbar{max-width:900px;margin:18px auto;display:flex;gap:10px;justify-content:center;align-items:center;flex-wrap:wrap}
-.print-toolbar button,.print-toolbar a{padding:10px 18px;background:var(--wine);color:#fff0cc;border:1px solid var(--gold);text-decoration:none;cursor:pointer;font:inherit}
-.print-toolbar button:hover,.print-toolbar a:hover{background:var(--wine-dark)}
-.admin-help{width:100%;text-align:center;color:var(--wine);font-weight:700}
-.print-book{max-width:900px;margin:0 auto 30px;padding:28px;background:var(--paper);box-shadow:0 8px 28px #0002}
-.cover-page{height:252mm;min-height:252mm;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;break-after:page;page-break-after:always;background:var(--cream);border:1px solid var(--gold)}
+.print-toolbar button,.print-toolbar a{padding:11px 20px;background:var(--navy);color:#fff;border:0;border-radius:6px;text-decoration:none;cursor:pointer;font:inherit;box-shadow:0 3px 10px #17324d22}
+.print-toolbar button:hover,.print-toolbar a:hover{background:var(--teal)}.admin-help{width:100%;text-align:center;color:#9b3f34;font-weight:700}
+.print-book{max-width:900px;margin:0 auto 34px;padding:32px;background:var(--paper);box-shadow:0 12px 36px #17324d20;border-radius:3px}
+.cover-page{height:252mm;min-height:252mm;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;break-after:page;page-break-after:always;background:linear-gradient(145deg,#e4f3f1,#fff5e7 55%,#fbe8e2);border:2px solid var(--teal)}
 .cover-page img{width:100%;height:100%;object-fit:cover}
-.cover-missing{width:100%;height:100%;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;padding:25mm;background:linear-gradient(145deg,#fffdf7,#eee1c9);border:9px double var(--gold);outline:1px solid var(--wine);outline-offset:-16px;color:var(--wine)}
-.cover-missing h1{font-size:42pt;letter-spacing:2px;margin:0 0 12mm}
-.cover-missing p{font-size:13pt;line-height:2}
-.foreword,.quote-page,.toc{min-height:0;padding:12mm 9mm;background:var(--paper)}
-.foreword,.quote-page,.toc{break-after:page;page-break-after:always}
-.foreword h2,.quote-page h2,.toc h2{color:var(--wine);font-size:21pt;text-align:center;margin:0 0 12mm;padding:0 0 6mm;border-bottom:2px solid var(--gold)}
-.foreword .foreword-body{white-space:pre-wrap;line-height:2.15;text-align:justify;margin-top:8mm;font-size:12pt}
-.foreword-sign{margin-top:18mm;text-align:right;line-height:2;font-size:11pt}
-.foreword-signature{display:block;margin:0 0 4px auto;max-height:22mm;max-width:60mm;width:auto;height:auto;object-fit:contain}
-.foreword-signature[hidden]{display:none}
-.quote-page{display:flex;flex-direction:column;justify-content:center;text-align:center}
-.quote-page blockquote{font-size:18pt;line-height:2.2;margin:20mm 8mm;color:var(--wine)}
-.quote-page .quote-author{margin-top:12mm;text-align:right}
-.toc table{width:100%;border-collapse:collapse;margin-top:8mm;font-size:10.5pt}
-.toc th,.toc td{border-bottom:1px solid var(--gold-light);padding:4mm 2mm;text-align:left;vertical-align:top}
-.toc th{color:var(--wine);background:#f7f0e4}
-.toc td:first-child,.toc td:last-child,.toc th:first-child,.toc th:last-child{text-align:center;white-space:nowrap;width:13mm}
-.toc-page{display:block;color:inherit;text-decoration:none;text-align:center}
-.toc-page::after{content:target-counter(attr(href),page)}
-.print-post{padding:8mm 2mm 10mm;break-inside:auto;page-break-inside:auto}
-.print-post+.print-post{border-top:1px solid #e7dcc8}
-.print-post .category-label{display:table;margin:0 auto 6mm;padding:2mm 7mm;border:1px solid var(--gold);color:var(--wine);font-size:9.5pt;letter-spacing:.3px;break-after:avoid-page;page-break-after:avoid}
-.print-post h2{color:var(--wine);text-align:center;font-size:19pt;line-height:1.65;margin:0 0 4mm;break-after:avoid-page;page-break-after:avoid}
-.print-post .meta{text-align:center;color:#775b3a;border-bottom:1px solid #dfcfad;padding-bottom:5mm;margin:0 0 7mm;font-size:9.5pt;line-height:1.8;break-after:avoid-page;page-break-after:avoid}
-.print-post .body{white-space:pre-wrap;line-height:2.05;font-size:12pt;text-align:justify;overflow-wrap:anywhere}
+.cover-missing{width:100%;height:100%;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;padding:25mm;background:radial-gradient(circle at top right,#f8d9cc 0,transparent 38%),linear-gradient(145deg,#e2f2ef,#fff7e9 58%,#fbe5df);border:10px double var(--gold);outline:1px solid var(--navy);outline-offset:-17px;color:var(--navy)}
+.cover-missing h1{font-size:44pt;letter-spacing:2px;margin:0 0 12mm;color:var(--teal)}.cover-missing p{font-size:13pt;line-height:2}
+.foreword,.quote-page,.toc{min-height:0;padding:15mm 12mm;background:var(--paper);break-after:page;page-break-after:always}
+.foreword h2,.quote-page h2,.toc h2{color:var(--navy);font-size:22pt;text-align:center;margin:0 0 12mm;padding:0 0 6mm;border-bottom:3px solid var(--gold)}
+.foreword .foreword-body{white-space:pre-wrap;line-height:2.15;text-align:justify;text-justify:inter-word;margin-top:8mm;font-size:12pt}
+.foreword-sign{margin-top:18mm;text-align:right;line-height:2;font-size:11pt;color:var(--navy)}
+.foreword-signature{display:block;margin:0 0 4px auto;max-height:22mm;max-width:60mm;width:auto;height:auto;object-fit:contain}.foreword-signature[hidden]{display:none}
+.quote-page{display:flex;flex-direction:column;justify-content:center;text-align:center}.quote-page blockquote{font-size:18pt;line-height:2.2;margin:20mm 8mm;color:var(--teal)}.quote-page .quote-author{margin-top:12mm;text-align:right;color:var(--coral)}
+.toc table{width:100%;border-collapse:collapse;margin-top:8mm;font-size:10.5pt}.toc th,.toc td{border-bottom:1px solid #d8e4e7;padding:4mm 2mm;text-align:left;vertical-align:top}.toc th{color:#fff;background:var(--navy)}.toc tr:nth-child(even) td{background:#f1f7f6}
+.toc td:first-child,.toc td:last-child,.toc th:first-child,.toc th:last-child{text-align:center;white-space:nowrap;width:13mm}.toc-page{display:block;color:var(--teal);text-decoration:none;text-align:center}.toc-page::after{content:target-counter(attr(href),page)}
+.print-post{padding:10mm 3mm 12mm;break-inside:auto;page-break-inside:auto;column-count:1!important;columns:1!important;column-width:auto!important}.print-post+.print-post{border-top:1px solid #d8e4e7}
+.print-post .category-label{display:table;margin:0 auto 7mm;padding:2mm 8mm;border-radius:20px;background:var(--teal-soft);border:1px solid #9dcac4;color:var(--teal);font-size:9.5pt;break-after:avoid-page;page-break-after:avoid}
+.print-post h2{color:var(--navy);text-align:center;font-size:20pt;line-height:1.7;margin:0 0 4mm;break-after:avoid-page;page-break-after:avoid}
+.print-post .meta{text-align:center;color:#8c5a42;border-bottom:1px solid #e8d6bf;padding-bottom:5mm;margin:0 0 8mm;font-size:9.5pt;line-height:1.8;break-after:avoid-page;page-break-after:avoid}
+.print-post .body{display:block;width:100%;max-width:100%;white-space:pre-wrap;line-height:2.15;font-size:12pt;text-align:left!important;text-justify:none!important;word-spacing:normal!important;letter-spacing:normal!important;overflow-wrap:anywhere;column-count:1!important;columns:1!important;column-width:auto!important}
 .print-post img{display:block;max-width:75%;max-height:220px;object-fit:contain;margin:8mm auto;break-inside:avoid;page-break-inside:avoid}
-.print-footer{text-align:center;border-top:1px solid var(--gold);padding:12mm;margin-top:15mm;color:var(--wine);break-before:page;page-break-before:always}
-.running-registration{position:fixed;top:-18mm;left:0;right:0;display:flex;justify-content:center;align-items:center;gap:10px;font-size:7pt;color:#765d43;z-index:5}
-.running-registration img{height:18px;max-width:48px;object-fit:contain}
-@page{size:A4;margin:23mm 17mm 20mm;@bottom-center{content:counter(page);font-family:serif;font-size:9pt;color:#765d43}}
-@page :right{@top-center{content:"பவிழிதழ் · தமிழ் இலக்கியக் காலாண்டிதழ்";font-family:"Noto Serif Tamil",serif;font-size:8pt;color:#765d43}}
-@page :left{@top-center{content:"பவிழிதழ் · காலாண்டு இதழ்";font-family:"Noto Serif Tamil",serif;font-size:8pt;color:#765d43}}
+.print-footer{text-align:center;border-top:2px solid var(--gold);padding:12mm;margin-top:15mm;color:var(--navy);break-before:page;page-break-before:always}
+.running-registration{position:fixed;top:-18mm;left:0;right:0;display:flex;justify-content:center;align-items:center;gap:10px;font-size:7pt;color:var(--teal);z-index:5}.running-registration img{height:18px;max-width:48px;object-fit:contain}
+.pagedjs_pages{width:fit-content;margin:20px auto!important}.pagedjs_page{margin:0 auto 22px!important;background:#fff;box-shadow:0 8px 28px #17324d25}
+@page{size:A4;margin:25mm 20mm 22mm;@bottom-center{content:counter(page);font-family:serif;font-size:9pt;color:var(--teal)}}
+@page :right{@top-center{content:"பவிழிதழ் · தமிழ் இலக்கியக் காலாண்டிதழ்";font-family:"Noto Serif Tamil",serif;font-size:8pt;color:var(--teal)}}
+@page :left{@top-center{content:"பவிழிதழ் · காலாண்டு இதழ்";font-family:"Noto Serif Tamil",serif;font-size:8pt;color:var(--teal)}}
 @media screen{.cover-page{height:1050px;min-height:1050px}.print-book{padding:28px}.foreword,.quote-page,.toc{min-height:850px}}
-@media print{
- body{background:#fff;-webkit-print-color-adjust:exact;print-color-adjust:exact}
- .print-toolbar{display:none}
- .print-book{max-width:none;margin:0;padding:0;box-shadow:none}
- .cover-page{height:252mm;min-height:252mm;break-after:page;page-break-after:always}
- .foreword,.quote-page,.toc{min-height:0}
- .print-post{break-inside:auto;page-break-inside:auto}
-}
+@media print{body{background:#fff;-webkit-print-color-adjust:exact;print-color-adjust:exact}.print-toolbar{display:none}.print-book{max-width:none;margin:0;padding:0;box-shadow:none;border-radius:0}.pagedjs_pages{width:auto;margin:0!important}.pagedjs_page{margin:0!important;box-shadow:none}.cover-page{height:252mm;min-height:252mm;break-after:page;page-break-after:always}.foreword,.quote-page,.toc{min-height:0}.print-post{break-inside:auto;page-break-inside:auto}}
 </style>
 </head>
 <body>
