@@ -19,6 +19,8 @@ html,body{margin:0;padding:0;background:#e8eef3;color:var(--ink);font-family:"No
 .cover-missing h1{font-size:38pt;margin:0 0 8mm;color:var(--teal)}
 .cover-missing p{font-size:12pt;line-height:1.8}
 .foreword,.quote-page,.toc{padding:5mm 7mm;background:var(--paper);margin:0 0 5mm;break-inside:auto;page-break-inside:auto}
+.foreword{break-after:page;page-break-after:always}
+.toc{break-after:page;page-break-after:always}
 .foreword h2,.quote-page h2,.toc h2{color:var(--navy);font-size:16pt;text-align:center;margin:0 0 3mm;padding:0 0 2mm;border-bottom:1.5px solid var(--gold)}
 .foreword .foreword-body{white-space:pre-wrap;line-height:1.65;text-align:justify;margin:0;font-size:10pt}
 .foreword-sign{margin-top:3mm;text-align:right;line-height:1.4;font-size:9pt;color:var(--navy)}
@@ -56,7 +58,7 @@ html,body{margin:0;padding:0;background:#e8eef3;color:var(--ink);font-family:"No
 @page :right{margin-left:21mm;margin-right:16mm;@top-center{content:"பவிழிதழ் · தமிழ் இலக்கியக் காலாண்டிதழ்";font-family:"Noto Serif Tamil",serif;font-size:8pt;color:var(--teal)}}
 @page :left{margin-left:16mm;margin-right:21mm;@top-center{content:"பவிழிதழ் · காலாண்டு இதழ்";font-family:"Noto Serif Tamil",serif;font-size:8pt;color:var(--teal)}}
 @media screen{.print-book{padding:24px}.cover-page{height:180mm;min-height:180mm}.pagedjs_pages{max-width:100%;overflow-x:auto}}
-@media print{html,body{background:#fff;-webkit-print-color-adjust:exact;print-color-adjust:exact}.print-toolbar{display:none}.print-book{max-width:none;margin:0;padding:0;box-shadow:none}.pagedjs_pages{display:block!important;width:auto!important;margin:0!important}.pagedjs_page{width:auto!important;margin:0!important;box-shadow:none}.cover-page{height:180mm;min-height:180mm}.print-post{break-inside:auto;page-break-inside:auto}}
+@media print{html,body{background:#fff;-webkit-print-color-adjust:exact;print-color-adjust:exact}.print-toolbar{display:none}.print-book{max-width:none;margin:0;padding:0;box-shadow:none}.pagedjs_pages{display:block!important;width:auto!important;margin:0!important}.pagedjs_page{width:auto!important;margin:0!important;box-shadow:none}.cover-page{height:180mm;min-height:180mm}.foreword{break-after:page!important;page-break-after:always!important}.toc{break-after:page!important;page-break-after:always!important}.print-post{break-inside:auto;page-break-inside:auto}}
 </style>
 </head>
 <body>
