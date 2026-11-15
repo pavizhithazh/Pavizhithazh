@@ -29,9 +29,9 @@ body{margin:0;background:var(--canvas);color:var(--ink);font-family:"Noto Serif 
 .print-post .category-label{display:table;margin:0 auto 7mm;padding:2mm 8mm;border-radius:20px;background:var(--teal-soft);border:1px solid #9dcac4;color:var(--teal);font-size:9.5pt;break-after:avoid-page;page-break-after:avoid}
 .print-post h2{color:var(--navy);text-align:center;font-size:20pt;line-height:1.7;margin:0 0 4mm;break-after:avoid-page;page-break-after:avoid}
 .print-post .meta{text-align:center;color:#8c5a42;border-bottom:1px solid #e8d6bf;padding-bottom:5mm;margin:0 0 8mm;font-size:9.5pt;line-height:1.8;break-after:avoid-page;page-break-after:avoid}
-.print-post .body{display:block;width:100%;max-width:100%;white-space:pre-wrap;line-height:2.15;font-size:12pt;text-align:left!important;text-justify:none!important;word-spacing:normal!important;letter-spacing:normal!important;overflow-wrap:anywhere;column-count:1!important;columns:1!important;column-width:auto!important}
+.print-post.keep-together{break-inside:avoid-page;page-break-inside:avoid}.print-post.poem-post .body{white-space:pre-wrap;text-align:left!important;line-height:2.25}.print-post .body{display:block;width:100%;max-width:100%;white-space:pre-wrap;line-height:2.15;font-size:12pt;text-align:left!important;text-justify:none!important;word-spacing:normal!important;letter-spacing:normal!important;overflow-wrap:anywhere;column-count:1!important;columns:1!important;column-width:auto!important}
 .print-post img{display:block;max-width:75%;max-height:220px;object-fit:contain;margin:8mm auto;break-inside:avoid;page-break-inside:avoid}
-.print-footer{text-align:center;border-top:2px solid var(--gold);padding:12mm;margin-top:15mm;color:var(--navy);break-before:page;page-break-before:always}
+.ad-page{display:flex;align-items:center;justify-content:center;break-inside:avoid;page-break-inside:avoid;text-align:center;border:1px dashed #9dcac4;background:#f7fbfa;margin:8mm 0;padding:8mm;color:#167c80}.ad-page.full{min-height:230mm;break-before:page;page-break-before:always;break-after:page;page-break-after:always}.ad-page.half{min-height:115mm;break-inside:avoid-page;page-break-inside:avoid}.ad-page img{display:block;max-width:100%;max-height:220mm;object-fit:contain;margin:auto}.ad-page.half img{max-height:105mm}.ad-placeholder{font-size:15pt;letter-spacing:1px}.print-footer{text-align:center;border-top:2px solid var(--gold);padding:12mm;margin-top:15mm;color:var(--navy);break-before:page;page-break-before:always}
 .running-registration{position:fixed;top:-18mm;left:0;right:0;display:flex;justify-content:center;align-items:center;gap:10px;font-size:7pt;color:var(--teal);z-index:5}.running-registration img{height:18px;max-width:48px;object-fit:contain}
 .pagedjs_pages{display:flex!important;flex-direction:column!important;align-items:center!important;width:100%!important;margin:20px auto!important;gap:22px}.pagedjs_page{flex:0 0 auto;width:210mm!important;margin:0!important;background:#fff;box-shadow:0 8px 28px #17324d25}.pagedjs_sheet{width:210mm!important;min-height:297mm!important;background:#fffefa!important}
 @page{size:A4;margin:25mm 20mm 22mm;@bottom-center{content:counter(page);font-family:serif;font-size:9pt;color:var(--teal)}}
@@ -42,7 +42,7 @@ body{margin:0;background:var(--canvas);color:var(--ink);font-family:"Noto Serif 
 </style>
 </head>
 <body>
-<div class="print-toolbar"><button type="button" onclick="window.print()">PDF ஆகச் சேமி / அச்சிடு</button><a href="admin.html#quarterManager">நிர்வாகப் பக்கத்திற்குத் திரும்பு</a></div>
+<div class="print-toolbar"><button type="button" id="printIssueBtn">இதழை அச்சிடு / PDF ஆகச் சேமி</button><a href="admin.html#quarterManager">நிர்வாகப் பக்கத்திற்குத் திரும்பு</a></div>
 <div class="running-registration" id="runningRegistration"></div>
 <main class="print-book">
 <section class="cover-page" id="frontCover"></section>
@@ -61,6 +61,7 @@ if(settings.issnNumber||settings.udyamNumber||settings.issnLogo||settings.udyamL
  reg.innerHTML=`${settings.issnLogo?`<img src="${safe(settings.issnLogo)}" alt="ISSN">`:''}${settings.issnNumber?`<span>ISSN: ${safe(settings.issnNumber)}</span>`:''}${settings.udyamLogo?`<img src="${safe(settings.udyamLogo)}" alt="Udyam">`:''}${settings.udyamNumber?`<span>Udyam / MSME: ${safe(settings.udyamNumber)}</span>`:''}`;
 }
 const categories={kavithai:'கவிதை',kathai:'சிறுகதை',katturai:'கட்டுரை',aaivukatturai:'ஆய்வுக் கட்டுரை',kulandhai:'குழந்தை இலக்கியம்'};
+function renderAd(ad){if(!ad||!ad.enabled)return null;const section=document.createElement('section');section.className='ad-page '+(ad.size==='half'?'half':'full');section.setAttribute('aria-label','விளம்பரப் பக்கம்');if(ad.imageUrl){const img=document.createElement('img');img.src=ad.imageUrl;img.alt='விளம்பரம்';section.appendChild(img);}else{const label=document.createElement('div');label.className='ad-placeholder';label.textContent='விளம்பர இடம்';section.appendChild(label);}return section;}
 function cover(el,url,label){
  if(url){const img=document.createElement('img');img.src=url;img.alt=label;el.appendChild(img);}
  else{const box=document.createElement('div');box.className='cover-missing';const h=document.createElement('h1');h.textContent='பவிழிதழ்';const p=document.createElement('p');p.textContent=label+' படத்தை நிர்வாகப் பக்கத்தில் தேர்ந்தெடுக்கவும்.';box.append(h,p);el.appendChild(box);}
@@ -75,11 +76,12 @@ if(!issue){
  const sg=document.getElementById('forewordSignature');if(sg&&issue.signatureUrl){sg.src=issue.signatureUrl;sg.hidden=false;}
  document.getElementById('forewordBody').textContent=(issue.theme?`கருப்பொருள்: ${issue.theme}\n\n`:'')+(issue.editor?`ஆசிரியர் / தொகுப்பாளர்: ${issue.editor}\n\n`:'')+(issue.foreword||`${issue.year} ஆம் ஆண்டின் ${issue.monthName} காலாண்டு இதழாக பவிழிதழ் வாசகர்களைச் சந்திக்கிறது. தமிழ் இலக்கியம், படைப்பாற்றல் மற்றும் வாசிப்பு ஆர்வத்தை வளர்க்கும் நோக்கில் இவ்விதழ் தொகுக்கப்பட்டுள்ளது.`);
  if(issue.quotePage&&issue.quoteText){document.body.classList.add('has-quote-page');const q=document.getElementById('quotePage');q.hidden=false;document.getElementById('quoteText').textContent=issue.quoteText;}
+ const adSlots=Array.isArray(issue.adSlots)?issue.adSlots:[];const adAfter=adSlots.filter(x=>x.enabled&&x.position==='after-foreword').map(renderAd).filter(Boolean);adAfter.forEach(x=>document.querySelector('.foreword').after(x));const adMiddle=adSlots.filter(x=>x.enabled&&x.position==='middle').map(renderAd).filter(Boolean);const adEnd=adSlots.filter(x=>x.enabled&&x.position==='before-back').map(renderAd).filter(Boolean);
  const ids=Array.isArray(issue.featuredPostIds)?issue.featuredPostIds:[],chosen=ids.map(id=>posts.find(p=>String(p.id)===String(id))).filter(Boolean);
  const order=['kavithai','kathai','katturai','aaivukatturai','kulandhai'],contents=document.getElementById('contentsRows'),target=document.getElementById('issuePosts');
- let rowNo=0;
+ let rowNo=0;let middleInserted=false;
  order.forEach(key=>{
-  chosen.filter(p=>p.category===key).forEach(post=>{
+  chosen.filter(p=>p.category===key).forEach((post,postIndex)=>{
    rowNo++;
    const postAnchor='post-'+String(post.id).replace(/[^a-zA-Z0-9_-]/g,'-');
    const tr=document.createElement('tr');
@@ -88,19 +90,25 @@ if(!issue){
    const authorCell=document.createElement('td');authorCell.textContent=post.author||'—';
    const pageCell=document.createElement('td');const pageLink=document.createElement('a');pageLink.className='toc-page';pageLink.href='#'+postAnchor;pageLink.setAttribute('aria-label','பக்க எண்ணைக் காண்க');pageCell.appendChild(pageLink);
    tr.append(no,titleCell,authorCell,pageCell);contents.appendChild(tr);
-   const article=document.createElement('article');article.id=postAnchor;article.className='print-post';article.dataset.category=post.category||'';
+   const article=document.createElement('article');article.id=postAnchor;article.className='print-post';article.dataset.category=post.category||'';const lineCount=String(post.content||'').split(/\\r?\\n/).filter(x=>x.trim()).length;if(lineCount<=18){article.classList.add('keep-together');}if(post.category==='kavithai'){article.classList.add('poem-post');}
    const category=document.createElement('p');category.className='category-label';category.textContent=categories[post.category]||'படைப்பு';
    const heading=document.createElement('h2');heading.textContent=post.title||'தலைப்பிடப்படாத படைப்பு';
    const meta=document.createElement('p');meta.className='meta';meta.textContent=(post.author||'எழுத்தாளர்')+(post.date?' · '+post.date:'');
    article.append(category,heading,meta);
    if(post.image){const img=document.createElement('img');img.src=post.image;img.alt=post.title||'படைப்பு படம்';article.appendChild(img);}
    const body=document.createElement('div');body.className='body';body.textContent=post.content||'';article.appendChild(body);
-   target.appendChild(article);
+   target.appendChild(article);if(!middleInserted&&rowNo>=Math.ceil(chosen.length/2)&&adMiddle.length){adMiddle.forEach(ad=>target.appendChild(ad));middleInserted=true;}
   });
  });
+ if(!middleInserted&&adMiddle.length){adMiddle.forEach(ad=>target.appendChild(ad));}adEnd.forEach(ad=>document.querySelector('#backCover').before(ad));
  if(!chosen.length){contents.innerHTML='<tr><td colspan="4">படைப்புகள் தேர்வு செய்யப்படவில்லை.</td></tr>';target.textContent='இந்த இதழில் படைப்புகள் சேர்க்கப்படவில்லை.';}
 }
 </script>
 <script src="https://unpkg.com/pagedjs/dist/paged.polyfill.js"></script>
+<script>
+document.getElementById('printIssueBtn')?.addEventListener('click',()=>{window.focus();window.print();});
+window.addEventListener('beforeprint',()=>{document.body.classList.add('printing-issue');});
+window.addEventListener('afterprint',()=>{document.body.classList.remove('printing-issue');});
+</script>
 </body>
 </html>
