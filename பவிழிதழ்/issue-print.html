@@ -15,6 +15,7 @@ html,body{margin:0;padding:0;background:#e8eef3;color:var(--ink);font-family:"No
 .print-book{max-width:1120px;margin:0 auto 28px;padding:24px;background:#fff;box-shadow:0 8px 28px #17324d20}
 .cover-page{height:180mm;min-height:180mm;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;break-after:page;page-break-after:always;background:linear-gradient(145deg,#e4f3f1,#fff5e7 55%,#fbe8e2);border:2px solid var(--teal)}
 .cover-page img{width:100%;height:100%;object-fit:cover}
+#backCover{break-before:page;page-break-before:always;break-after:auto;page-break-after:auto;margin-top:0}
 .cover-missing{width:100%;height:100%;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;padding:20mm;background:linear-gradient(145deg,#e2f2ef,#fff7e9 58%,#fbe5df);border:8px double var(--gold);color:var(--navy)}
 .cover-missing h1{font-size:38pt;margin:0 0 8mm;color:var(--teal)}
 .cover-missing p{font-size:12pt;line-height:1.8}
@@ -58,7 +59,7 @@ html,body{margin:0;padding:0;background:#e8eef3;color:var(--ink);font-family:"No
 @page :right{margin-left:21mm;margin-right:16mm;@top-center{content:"பவிழிதழ் · தமிழ் இலக்கியக் காலாண்டிதழ்";font-family:"Noto Serif Tamil",serif;font-size:8pt;color:var(--teal)}}
 @page :left{margin-left:16mm;margin-right:21mm;@top-center{content:"பவிழிதழ் · காலாண்டு இதழ்";font-family:"Noto Serif Tamil",serif;font-size:8pt;color:var(--teal)}}
 @media screen{.print-book{padding:24px}.cover-page{height:180mm;min-height:180mm}.pagedjs_pages{max-width:100%;overflow-x:auto}}
-@media print{html,body{background:#fff;-webkit-print-color-adjust:exact;print-color-adjust:exact}.print-toolbar{display:none}.print-book{max-width:none;margin:0;padding:0;box-shadow:none}.pagedjs_pages{display:block!important;width:auto!important;margin:0!important}.pagedjs_page{width:auto!important;margin:0!important;box-shadow:none}.cover-page{height:180mm;min-height:180mm}.foreword{break-after:page!important;page-break-after:always!important}.toc{break-after:page!important;page-break-after:always!important}.print-post{break-inside:auto;page-break-inside:auto}}
+@media print{html,body{background:#fff;-webkit-print-color-adjust:exact;print-color-adjust:exact}.print-toolbar{display:none}.print-book{max-width:none;margin:0;padding:0;box-shadow:none}.pagedjs_pages{display:block!important;width:auto!important;margin:0!important}.pagedjs_page{width:auto!important;margin:0!important;box-shadow:none}.cover-page{height:180mm;min-height:180mm}#backCover{break-before:page;page-break-before:always;break-after:auto;page-break-after:auto}.foreword{break-after:page!important;page-break-after:always!important}.toc{break-after:page!important;page-break-after:always!important}.print-post{break-inside:auto;page-break-inside:auto}}
 </style>
 </head>
 <body>
