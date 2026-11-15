@@ -31,13 +31,13 @@ html,body{margin:0;padding:0;background:#e8eef3;color:var(--ink);font-family:"No
 .toc th,.toc td{border-bottom:1px solid #d8e4e7;padding:1.6mm 2mm;text-align:left;vertical-align:top}
 .toc th{color:#fff;background:var(--navy)}
 .toc tr:nth-child(even) td{background:#f1f7f6}
-.toc td:first-child,.toc td:last-child,.toc th:first-child,.toc th:last-child{text-align:center;white-space:nowrap;width:12mm}
+.toc td:first-child,.toc th:first-child{text-align:center;white-space:nowrap;width:14mm}
 .toc-page{display:block;color:var(--teal);text-decoration:none;text-align:center}
 .toc-page::after{content:target-counter(attr(href),page)}
-#issuePosts{column-count:2;column-gap:13mm;column-rule:1px solid #dce5e8;column-fill:auto}
-.print-post{display:inline-block;width:100%;padding:3mm 1mm 4mm;margin:0;vertical-align:top;break-inside:auto;page-break-inside:auto}
+#issuePosts{display:block;width:100%;column-count:1;column-gap:0;column-rule:0;column-fill:auto}
+.print-post{display:block;width:100%;padding:5mm 3mm 6mm;margin:0;break-inside:auto;page-break-inside:auto}
 .print-post+.print-post{border-top:1px solid #d8e4e7}
-.print-post .category-label{display:table;margin:0 auto 1.5mm;padding:1mm 4mm;border-radius:15px;background:#e7f4f1;border:1px solid #9dcac4;color:var(--teal);font-size:8pt;break-after:avoid;page-break-after:avoid}
+.post-heading-group{display:block;break-after:avoid;page-break-after:avoid}.print-post .category-label{display:table;margin:0 auto 1.5mm;padding:1mm 4mm;border-radius:15px;background:#e7f4f1;border:1px solid #9dcac4;color:var(--teal);font-size:8pt;break-after:avoid;page-break-after:avoid}
 .print-post h2{color:var(--navy);text-align:center;font-size:13pt;line-height:1.35;margin:0 0 1.5mm;break-after:avoid;page-break-after:avoid}
 .print-post .meta{text-align:center;color:#8c5a42;border-bottom:1px solid #e8d6bf;padding-bottom:1.5mm;margin:0 0 2mm;font-size:8pt;line-height:1.4;break-after:avoid;page-break-after:avoid}
 .print-post .body{display:block;width:100%;white-space:pre-wrap;line-height:1.65;font-size:9.5pt;text-align:justify;overflow-wrap:anywhere;word-spacing:normal;letter-spacing:normal;orphans:3;widows:3;column-count:1;columns:1}
@@ -52,7 +52,7 @@ html,body{margin:0;padding:0;background:#e8eef3;color:var(--ink);font-family:"No
 .ad-placeholder{font-size:13pt}
 .running-registration{position:fixed;top:-15mm;left:0;right:0;display:flex;justify-content:center;align-items:center;gap:8px;font-size:7pt;color:var(--teal)}
 .running-registration img{height:15px;max-width:42px;object-fit:contain}
-@page{size:A4 landscape;margin:18mm 17mm 16mm;@bottom-center{content:counter(page);font-family:serif;font-size:8pt;color:var(--teal)}}
+@page{size:A4 portrait;margin:18mm 19mm 17mm;@bottom-center{content:counter(page);font-family:serif;font-size:8pt;color:var(--teal)}}
 @page :right{@top-center{content:"பவிழிதழ் · தமிழ் இலக்கியக் காலாண்டிதழ்";font-family:"Noto Serif Tamil",serif;font-size:8pt;color:var(--teal)}}
 @page :left{@top-center{content:"பவிழிதழ் · காலாண்டு இதழ்";font-family:"Noto Serif Tamil",serif;font-size:8pt;color:var(--teal)}}
 @media screen{.print-book{padding:24px}.cover-page{height:180mm;min-height:180mm}.pagedjs_pages{max-width:100%;overflow-x:auto}}
@@ -66,7 +66,7 @@ html,body{margin:0;padding:0;background:#e8eef3;color:var(--ink);font-family:"No
 <section class="cover-page" id="frontCover"></section>
 <section class="foreword"><h2>முன்னுரை</h2><div class="foreword-body" id="forewordBody"></div><div class="foreword-sign"><img id="forewordSignature" class="foreword-signature" alt="நிறுவனர் கையொப்பம்" hidden>இயக்குநர் மற்றும் ஒருங்கிணைப்பாளர்<br><strong>எழுத்தாளர் கவிஞர் இரா.பவித்ரா</strong></div></section>
 <section class="quote-page" id="quotePage" hidden><h2>ஆசிரியர் பக்கம்</h2><blockquote id="quoteText"></blockquote><p class="quote-author">— ஆசிரியர்</p></section>
-<section class="toc"><h2>பொருளடக்கம்</h2><table><thead><tr><th>வ.எண்</th><th>படைப்பின் தலைப்பு</th><th>படைப்பாளர்</th><th>பக்கம்</th></tr></thead><tbody id="contentsRows"></tbody></table></section>
+<section class="toc"><h2>பொருளடக்கம்</h2><table><thead><tr><th>வ.எண்</th><th>படைப்பின் தலைப்பு</th><th>படைப்பாளர்</th></tr></thead><tbody id="contentsRows"></tbody></table></section>
 <div id="issuePosts"></div>
 <section class="cover-page" id="backCover"></section>
 </main>
