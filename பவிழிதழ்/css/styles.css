@@ -699,8 +699,10 @@ header{position:relative}
 
 /* Pavizhidhal light / dark theme */
 .pavi-theme-toggle{position:fixed;right:16px;bottom:16px;z-index:9999;border:1px solid var(--gold-accent);border-radius:999px;padding:10px 15px;background:var(--card-bg);color:var(--text-dark);box-shadow:0 4px 16px #0003;font:600 14px 'Mukta Malar',sans-serif;cursor:pointer}
-.pavi-registration-strip{display:flex;align-items:center;justify-content:center;gap:12px;flex-wrap:wrap;padding:7px 12px;background:var(--card-bg);color:var(--text-dark);border-bottom:1px solid var(--border-color);font-size:.82rem;text-align:center}
-.pavi-registration-strip img{height:28px;max-width:80px;object-fit:contain}
+.pavi-registration-strip{display:flex;align-items:center;justify-content:center;gap:14px;flex-wrap:wrap;padding:9px 14px;margin:0 auto 8px;background:var(--card-bg);color:var(--text-dark);border-bottom:1px solid var(--border-color);font-size:.9rem;font-weight:600;text-align:center;line-height:1.5}
+.pavi-registration-strip img{height:42px;width:auto;max-width:110px;object-fit:contain;flex:0 0 auto}
+.pavi-registration-strip span{overflow-wrap:anywhere}
+@media(max-width:600px){.pavi-registration-strip{gap:8px;padding:8px 10px;font-size:.78rem}.pavi-registration-strip img{height:38px;max-width:96px}}
 :root[data-theme="dark"]{color-scheme:dark;--bg-color:#171717;--card-bg:#242424;--text-dark:#f1eadf;--text-muted:#c5b9a8;--border-color:#5a4b3c;--primary-red:#f0b5a9;--gold-accent:#d6b56d}
 :root[data-theme="dark"] body{background-color:var(--bg-color);background-image:radial-gradient(#303030 15%,transparent 16%),radial-gradient(#262626 15%,transparent 16%);color:var(--text-dark)}
 :root[data-theme="dark"] header,:root[data-theme="dark"] footer,:root[data-theme="dark"] .post-card,:root[data-theme="dark"] .program-card,:root[data-theme="dark"] .admin-section,:root[data-theme="dark"] .admin-quick-nav,:root[data-theme="dark"] .visitor-stats-panel,:root[data-theme="dark"] .reading-sheet,:root[data-theme="dark"] .comment-card{background:#242424!important;color:#f1eadf!important;border-color:#66543f!important}
