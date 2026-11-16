@@ -15,15 +15,16 @@ const PaviDB = (() => {
   async function scheduleExistingPostsForNov25(){
     const db=client(); if(!db) throw new Error('Supabase client load ஆகவில்லை.');
     const key='legacy_posts_release_migration_20261116';
-    const {data:marker,error:markerError}=await db.from('site_settings').select('setting_key').eq('setting_key',key).maybeSingle();
-    fail(markerError);
-    if(marker) return 0;
-    const {data,error}=await db.from('posts').update({display_date:'2026-11-25'}).eq('published',true).or('display_date.is.null,display_date.lt.2026-11-25').select('id');
+    const {data:existing,error:readError}=await db.from('site_settings').select('setting_value').eq('setting_key',key).maybeSingle();
+    fail(readError);
+    if(existing?.setting_value?.postIds) return existing.setting_value.postIds.length;
+    const {data:posts,error}=await db.from('posts').select('id').eq('published',true);
     fail(error);
-    const {error:saveError}=await db.from('site_settings').upsert({setting_key:key,setting_value:true,updated_at:new Date().toISOString()},{onConflict:'setting_key'});
+    const settingValue={releaseDate:'2026-11-25',postIds:(posts||[]).map(p=>String(p.id))};
+    const {error:saveError}=await db.from('site_settings').upsert({setting_key:key,setting_value:settingValue,updated_at:new Date().toISOString()},{onConflict:'setting_key'});
     fail(saveError);
     await refreshAdminPosts();
-    return (data||[]).length;
+    return settingValue.postIds.length;
   }
   async function refreshAdminPosts() {
     const db=client(); if(!db) throw new Error('Supabase client load ஆகவில்லை. இணைய இணைப்பைச் சரிபார்க்கவும்.');
@@ -35,7 +36,13 @@ const PaviDB = (() => {
   }
   async function refreshPosts() {
     const posts=await refreshAdminPosts();
-    const visible=posts.filter(post=>isPublicReleaseDate(post.date));
+    const db=client();
+    const {data:gate,error}=await db.from('site_settings').select('setting_value').eq('setting_key','legacy_posts_release_migration_20261116').maybeSingle();
+    fail(error);
+    const legacy=gate?.setting_value||{};
+    const legacyIds=new Set(Array.isArray(legacy.postIds)?legacy.postIds.map(String):[]);
+    const legacyReleased=legacy.releaseDate?legacy.releaseDate<=indiaToday():true;
+    const visible=posts.filter(post=>legacyIds.has(String(post.id))?!legacyReleased?false:true:isPublicReleaseDate(post.date));
     localStorage.setItem('pavizhidhal_posts',JSON.stringify(visible));
     return visible;
   }
