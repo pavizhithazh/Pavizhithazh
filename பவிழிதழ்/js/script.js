@@ -14,8 +14,14 @@ const PaviDB = (() => {
   const isPublicReleaseDate=value=>{const date=String(value||'').trim().slice(0,10);if(!/^\d{4}-\d{2}-\d{2}$/.test(date))return false;return date<=indiaToday();};
   async function scheduleExistingPostsForNov25(){
     const db=client(); if(!db) throw new Error('Supabase client load ஆகவில்லை.');
+    const key='legacy_posts_release_migration_20261116';
+    const {data:marker,error:markerError}=await db.from('site_settings').select('setting_key').eq('setting_key',key).maybeSingle();
+    fail(markerError);
+    if(marker) return 0;
     const {data,error}=await db.from('posts').update({display_date:'2026-11-25'}).eq('published',true).or('display_date.is.null,display_date.lt.2026-11-25').select('id');
     fail(error);
+    const {error:saveError}=await db.from('site_settings').upsert({setting_key:key,setting_value:true,updated_at:new Date().toISOString()},{onConflict:'setting_key'});
+    fail(saveError);
     await refreshAdminPosts();
     return (data||[]).length;
   }
