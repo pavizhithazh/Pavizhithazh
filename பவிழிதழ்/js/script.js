@@ -1233,7 +1233,7 @@ function injectSubmissionNotice(){
   const category=document.body.getAttribute('data-category');if(category==='admin'||category==='about')return;
   const main=document.querySelector('main');if(!main)return;
   const box=document.createElement('section');box.id='submissionNotice';box.className='submission-notice';
-  box.innerHTML=`<p class="section-eyebrow">✦ படைப்பாளர்களுக்கு அழைப்பு ✦</p><h2>உங்கள் படைப்பும் பவிழிதழில் மலரட்டும்!</h2><p>எங்கள் தளத்தில் உங்கள் படைப்பை வெளியிட விரும்பினால், தெளிவான யூனிகோட் தமிழ் எழுத்துருவில் தட்டச்சு செய்து அனுப்புங்கள். மின்னஞ்சலின் தலைப்பில் படைப்பின் பெயரையும் வகையையும் (கவிதை, சிறுகதை, கட்டுரை, ஆய்வுக் கட்டுரை, குழந்தை இலக்கியம் போன்றவை) குறிப்பிடுங்கள். அதனுடன் உங்கள் பெயர், ஊர், சுருக்கமான சுயவிவரம் மற்றும் தொடர்பு விவரங்களையும் இணைத்து அனுப்பவும்.</p><p class="submission-email">படைப்புகள்: <a href="mailto:editor.pavizhithazh@gmail.com?subject=பவிழிதழுக்கு%20படைப்பு">editor.pavizhithazh@gmail.com</a></p>`;
+  box.innerHTML=`<p class="section-eyebrow">✦ படைப்பாளர்களுக்கு அழைப்பு ✦</p><h2>உங்கள் படைப்பும் பவிழிதழில் மலரட்டும்!</h2><p>உங்கள் படைப்பை தெளிவான யூனிகோட் தமிழ் எழுத்துருவில் மின்னஞ்சல் மூலம் அனுப்புங்கள். தலைப்பில் படைப்பின் பெயரையும் வகையையும் குறிப்பிடுங்கள். படைப்பாளரின் பெயர், மின்னஞ்சல் முகவரி, படைப்பின் தலைப்பு, வகை மற்றும் முழுப் படைப்பு அவசியம். புகைப்படம், படைப்புக்கான படம், சுயவிவரம், ஊர் ஆகியவை விருப்பம்; தொலைபேசி எண் கட்டாயமில்லை. பொதுப் பயனர்கள் தளத்தில் நேரடியாகப் பதிவேற்ற முடியாது; ஆசிரியர் குழு பரிசீலித்த பின்னர் நிர்வாகி மட்டுமே பதிவேற்றுவார். AI மூலம் முழுமையாகவோ பெரும்பகுதியாகவோ உருவாக்கப்பட்ட படைப்புகள் ஏற்கப்படாது; எழுத்துப்பிழை/இலக்கணத் திருத்த உதவி மட்டும் அனுமதி. <a href="editorial-policy.html">ஆசிரியர் கொள்கை</a>, <a href="originality-policy.html">அசல் படைப்புகள் கொள்கை</a>, <a href="author-guidelines.html">முழுமையான வழிகாட்டுதல்கள்</a> ஆகியவற்றைப் படிக்கவும்.</p><p class="submission-email">படைப்புகள்: <a href="mailto:editor.pavizhithazh@gmail.com?subject=பவிழிதழுக்கு%20படைப்பு">editor.pavizhithazh@gmail.com</a></p>`;
   main.appendChild(box);
 }
 function upgradePublicFooter(){
@@ -1254,7 +1254,7 @@ function upgradePublicFooter(){
   contact.className='footer-contact-standard';contact.innerHTML=contactHTML;
   // Remove the marked legacy footer copy and the separate editor mailbox line.
   // The editor address remains available in the dedicated submission section/About page.
-  let legalLinks=document.createElement('nav');legalLinks.className='legal-footer-links';legalLinks.setAttribute('aria-label','சட்ட மற்றும் தகவல் இணைப்புகள்');legalLinks.innerHTML='<a href="privacy-policy.html">தனியுரிமைக் கொள்கை</a><a href="terms.html">பயன்பாட்டு விதிமுறைகள்</a><a href="about.html">தொடர்பு</a>';
+  let legalLinks=document.createElement('nav');legalLinks.className='legal-footer-links';legalLinks.setAttribute('aria-label','சட்ட மற்றும் தகவல் இணைப்புகள்');legalLinks.innerHTML='<a href="editorial-policy.html">ஆசிரியர் கொள்கை</a><a href="originality-policy.html">அசல் படைப்புகள் கொள்கை</a><a href="author-guidelines.html">படைப்பாளர் வழிகாட்டுதல்</a><a href="privacy-policy.html">தனியுரிமைக் கொள்கை</a><a href="terms.html">பயன்பாட்டு விதிமுறைகள்</a><a href="about.html">தொடர்பு</a>';
   let visitor=document.getElementById('visitorStatsPanel');
   if(!visitor){visitor=document.createElement('section');visitor.id='visitorStatsPanel';visitor.className='visitor-stats-panel';visitor.setAttribute('aria-label','பவிழிதழ் வாசகர் வருகைக் கணக்கு');}
   footer.replaceChildren(founder,contact,...(links?[links]:[]),legalLinks,visitor,...copyright);
