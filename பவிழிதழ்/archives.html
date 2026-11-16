@@ -7,7 +7,7 @@
 <title>இதழ்கள் – Archives | பவிழிதழ்</title>
 <link rel="stylesheet" href="css/styles.css">
 </head>
-<body data-category="about">
+<body data-category="archives">
 <button class="nav-toggle-btn" id="navToggleBtn">☰ பொருளடக்கம்</button>
 <div class="drawer-overlay" id="drawerOverlay"></div>
 <aside class="side-drawer" id="sideDrawer">
@@ -17,16 +17,17 @@
 <li><a href="about.html">எங்களைப் பற்றி &amp; தொடர்பு</a></li>
 </ul></aside>
 <header><div class="header-top"><div class="logo-container"><a href="index.html"><img alt="பவிழிதழ் லோகோ" id="siteLogo" src="images/logo.svg"></a></div><div class="header-text"><h1 class="site-title">பவிழிதழ்</h1><p>சொல்லில் மலரும் சிந்தனைகள்</p></div></div><div class="issue-notice">தமிழ் இலக்கிய காலாண்டு மின்னிதழ் · ஜனவரி, ஏப்ரல், ஜூலை, அக்டோபர்</div></header>
-<main class="container">
+<main class="container" id="publishedQuarterIssues">
 <h2 class="page-heading">வெளியான இதழ்கள் <small>Archives</small></h2>
 <article class="post-card">
-<p>பவிழிதழின் காலாண்டு மின்னிதழ்கள் ஆண்டு மற்றும் வெளியீட்டு மாத அடிப்படையில் இங்கு தொகுக்கப்படும். ஒவ்வொரு இதழின் படைப்புகளும் தனித்தனி வாசிப்புப் பக்கங்களுடன் இணைக்கப்படும்.</p>
-<h3>2027</h3>
-<section class="program-card"><h3>ஜனவரி 2027 · முதல் இதழ்</h3><p>முதல் இதழ் தயாரிப்பில் உள்ளது. வெளியீட்டுக்குப் பிறகு அட்டைப்படம், உள்ளடக்கப் பட்டியல் மற்றும் படைப்புகளுக்கான இணைப்புகள் இங்கு சேர்க்கப்படும்.</p><a class="issue-read-link" href="issue-2027-01.html">முதல் இதழ் விவரங்களைப் பார்க்க ↗</a></section>
-<section class="program-card"><h3>ஏப்ரல் 2027 · இரண்டாம் இதழ்</h3><p>வெளியீட்டுக்குப் பிறகு விவரங்கள் சேர்க்கப்படும்.</p></section>
-<section class="program-card"><h3>ஜூலை 2027 · மூன்றாம் இதழ்</h3><p>வெளியீட்டுக்குப் பிறகு விவரங்கள் சேர்க்கப்படும்.</p></section>
-<section class="program-card"><h3>அக்டோபர் 2027 · நான்காம் இதழ்</h3><p>வெளியீட்டுக்குப் பிறகு விவரங்கள் சேர்க்கப்படும்.</p></section>
-<p><strong>குறிப்பு:</strong> வெளியிடப்படாத இதழ்கள் முன்கூட்டியே வெளியானதாகக் காட்டப்படவில்லை. ஒவ்வொரு இதழும் உண்மையில் வெளியான பிறகே அதன் படைப்புகள் மற்றும் வெளியீட்டு விவரங்கள் புதுப்பிக்கப்படும்.</p>
+<p>பவிழிதழின் ஒவ்வொரு காலாண்டு இதழும் வெளியிடப்பட்டதும் அதன் ஆண்டு அடிப்படையில் இங்கு தானாகச் சேர்க்கப்படும். பழைய ஆண்டுகளின் இதழ்களும் நீக்கப்படாமல் தொடர்ந்து காப்பகத்தில் இருக்கும்.</p>
+<div class="published-issues-filter" aria-label="இதழ்களைத் தேர்ந்தெடுக்கும் வடிகட்டி">
+<label for="publishedIssueYear">ஆண்டு தேர்வு<select id="publishedIssueYear"><option value="all">அனைத்து ஆண்டுகள்</option></select></label>
+<label for="publishedIssueMonth">வெளியீட்டு மாதம்<select id="publishedIssueMonth"><option value="all">அனைத்து மாதங்கள்</option><option value="1">ஜனவரி</option><option value="4">ஏப்ரல்</option><option value="7">ஜூலை</option><option value="10">அக்டோபர்</option></select></label>
+<button type="button" class="admin-secondary" id="clearPublishedIssueFilters">அனைத்து இதழ்களையும் காட்டு</button>
+</div>
+<p class="published-issues-result" id="publishedIssuesResult" aria-live="polite"></p>
+<div id="publishedQuarterIssues"><p class="editorial-empty">வெளியான இதழ்கள் ஏற்றப்படுகின்றன…</p></div>
 </article></main>
 <footer><p class="footer-founder"><strong>நிறுவனர் மற்றும் ஒருங்கிணைப்பாளர்:</strong> கவிஞர், எழுத்தாளர் செல்வி இரா.பவித்ரா</p><p class="footer-contact-standard">பவிழிதழ் குழுவினர் · <a href="mailto:pavizhithazh@gmail.com">pavizhithazh@gmail.com</a></p><div class="footer-links"><a href="index.html">முகப்பு</a><a href="about.html">தொடர்பு</a></div><p>© 2026 பவிழிதழ். அனைத்து உரிமைகளும் பாதுகாக்கப்பட்டவை.</p><nav class="legal-footer-links"><a href="editorial-policy.html">ஆசிரியர் கொள்கை</a><a href="originality-policy.html">அசல் படைப்புகள் கொள்கை</a><a href="author-guidelines.html">படைப்பாளர் வழிகாட்டுதல்</a><a href="privacy-policy.html">தனியுரிமைக் கொள்கை</a><a href="terms.html">பயன்பாட்டு விதிமுறைகள்</a></nav></footer>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="js/supabase-config.js"></script><script src="js/analytics-config.js"></script><script src="js/script.js"></script>
