@@ -839,6 +839,7 @@ function renderPublicQuarterlyArchive(){
   yearFilter.innerHTML='<option value="all">அனைத்து ஆண்டுகள்</option>'+years.map(y=>'<option value="'+escapeHTML(y)+'">'+escapeHTML(y)+'</option>').join('');
   yearFilter.value=years.includes(selected)?selected:'all';
  }
+ const quarterPeriod=month=>({1:'நவம்பர் – ஜனவரி',4:'பிப்ரவரி – ஏப்ரல்',7:'மே – ஜூலை',10:'ஆகஸ்ட் – அக்டோபர்',3:'ஜனவரி – மார்ச்',6:'ஏப்ரல் – ஜூன்',9:'ஜூலை – செப்டம்பர்',12:'அக்டோபர் – டிசம்பர்'})[Number(month)]||'காலாண்டு';
  const draw=()=>{
   const y=yearFilter?.value||'all',m=monthFilter?.value||'all';
   const visible=issues.filter(x=>(y==='all'||String(x.year)===y)&&(m==='all'||String(x.month)===m));
@@ -848,8 +849,13 @@ function renderPublicQuarterlyArchive(){
   list.innerHTML=visible.length?Object.keys(groups).sort((a,b)=>Number(b)-Number(a)).map(year=>
    '<section class="archive-year-group"><h2 class="page-heading">'+escapeHTML(year)+' <small>ஆண்டு இதழ்கள்</small></h2><div class="published-issues-grid">'+groups[year].map(item=>{
     const cover=item.frontCoverUrl?'<img src="'+escapeHTML(item.frontCoverUrl)+'" alt="'+escapeHTML(item.coverTitle||'பவிழிதழ் இதழ் அட்டை')+'">':'<div class="published-issue-cover-fallback">பவிழிதழ்</div>';
-    const pdf=item.pdfUrl?'<a class="published-issue-download" href="'+escapeHTML(item.pdfUrl)+'" target="_blank" rel="noopener" download>PDF பதிவிறக்கம் ↓</a>':'<span class="published-issue-no-pdf">PDF இன்னும் பதிவேற்றப்படவில்லை</span>';
-    return '<article class="published-issue-card">'+cover+'<div class="published-issue-info"><p class="work-category">'+escapeHTML(item.year)+' · '+escapeHTML(item.monthName||quarterMonthName(item.month))+' · தொகுதி '+escapeHTML(item.year)+' / இதழ் '+escapeHTML(item.issueNumber||'')+'</p><h3>'+escapeHTML(item.coverTitle||item.title||'பவிழிதழ்')+'</h3>'+(item.theme?'<p>'+escapeHTML(item.theme)+'</p>':'')+'<a class="work-read-link" href="issue-print.html?id='+encodeURIComponent(item.id)+'">இதழை வாசிக்க / அச்சிட ↗</a>'+pdf+'</div></article>';
+    const monthName=item.monthName||quarterMonthName(item.month);
+    const pubDate=item.publishDate?formatTaDate(item.publishDate):'வெளியீட்டுத் தேதி குறிப்பிடப்படவில்லை';
+    const volume=item.volumeNumber||item.volume||item.year||'—';
+    const issueNo=item.issueNumber||'—';
+    const period=quarterPeriod(item.month);
+    const pdf=item.pdfUrl?'<a class="published-issue-download" href="'+escapeHTML(item.pdfUrl)+'" rel="noopener" download>PDF பதிவிறக்கம் ↓</a>':'<span class="published-issue-no-pdf">PDF இன்னும் பதிவேற்றப்படவில்லை</span>';
+    return '<article class="published-issue-card">'+cover+'<div class="published-issue-info"><h3>'+escapeHTML(item.coverTitle||item.title||'பவிழிதழ்')+'</h3>'+(item.theme?'<p>'+escapeHTML(item.theme)+'</p>':'')+'<dl class="archive-issue-details"><div><dt>வெளியான ஆண்டு</dt><dd>'+escapeHTML(item.year||'—')+'</dd></div><div><dt>வெளியான மாதம்</dt><dd>'+escapeHTML(monthName)+'</dd></div><div><dt>வெளியீட்டுத் தேதி</dt><dd>'+escapeHTML(pubDate)+'</dd></div><div><dt>கால அளவு</dt><dd>காலாண்டு · '+escapeHTML(period)+'</dd></div><div><dt>தொகுதி (Volume)</dt><dd>'+escapeHTML(volume)+'</dd></div><div><dt>இதழ் எண் (Issue)</dt><dd>'+escapeHTML(issueNo)+'</dd></div></dl>'+(item.editor?'<p><strong>ஆசிரியர் / தொகுப்பாளர்:</strong> '+escapeHTML(item.editor)+'</p>':'')+'<div class="archive-issue-actions"><a class="work-read-link" href="issue-print.html?id='+encodeURIComponent(item.id)+'" target="_blank" rel="noopener">அச்சிடு / PDF உருவாக்கு ↗</a>'+pdf+'</div></div></article>';
    }).join('')+'</div></section>'
   ).join(''):'<div class="editorial-empty">இதுவரை பொதுவில் வெளியிடப்பட்ட இதழ்கள் இல்லை. இதழ்கள் வெளியிடப்பட்டதும் ஆண்டு வாரியாக இங்கு தானாகச் சேர்க்கப்படும்.</div>';
  };
