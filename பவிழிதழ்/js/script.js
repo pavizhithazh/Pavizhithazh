@@ -10,8 +10,8 @@ const PaviDB = (() => {
     if(error) throw error; const grouped={}; (comments||[]).forEach(c=>{(grouped[c.post_id] ||= []).push({id:c.id,userName:c.user_name,text:c.content,date:new Date(c.created_at).toLocaleDateString('ta-IN'),approved:c.approved});});
     Object.keys(grouped).forEach(id=>localStorage.setItem(`pavizhidhal_comments_${id}`,JSON.stringify(grouped[id])));
   }
-  const indiaToday=()=>new Intl.DateTimeFormat('en-CA',{timeZone:'Asia/Kolkata',year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date());
-  const isPublicReleaseDate=value=>!/^\d{4}-\d{2}-\d{2}$/.test(String(value||''))||String(value)<=indiaToday();
+  const indiaToday=()=>{const parts=new Intl.DateTimeFormat('en-GB',{timeZone:'Asia/Kolkata',year:'numeric',month:'2-digit',day:'2-digit'}).formatToParts(new Date());const part=type=>parts.find(item=>item.type===type)?.value||'';return `${part('year')}-${part('month')}-${part('day')}`;};
+  const isPublicReleaseDate=value=>{const date=String(value||'').trim().slice(0,10);if(!/^\d{4}-\d{2}-\d{2}$/.test(date))return true;return date<=indiaToday();};
   async function refreshAdminPosts() {
     const db=client(); if(!db) throw new Error('Supabase client load ஆகவில்லை. இணைய இணைப்பைச் சரிபார்க்கவும்.');
     const {data:posts,error}=await db.from('posts').select('*').eq('published',true).order('created_at',{ascending:false});
