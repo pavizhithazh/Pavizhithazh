@@ -736,3 +736,23 @@ header{position:relative}
 
 /* Legal information pages and footer links */
 .legal-page{max-width:900px;margin:28px auto 42px;padding:clamp(18px,4vw,36px);background:var(--card-bg);border:1px solid var(--border-color);border-radius:14px;box-shadow:0 4px 14px #0000000d}.legal-page h3{margin:24px 0 8px;color:var(--primary-red);font-size:1.12rem}.legal-page p{margin:0 0 12px;line-height:1.9;overflow-wrap:anywhere}.legal-page a{overflow-wrap:anywhere}.legal-updated{margin-top:28px!important;color:var(--text-muted);font-size:.9rem}.legal-footer-links{display:flex;justify-content:center;align-items:center;flex-wrap:wrap;gap:10px 22px;padding:12px 10px;margin-top:12px;border-top:1px solid var(--border-color)}.legal-footer-links a{color:inherit;text-decoration:underline;text-underline-offset:3px;font-size:.92rem}.legal-footer-links a:focus-visible{outline:2px solid var(--gold-accent);outline-offset:4px}@media(max-width:600px){.legal-page{margin:14px 10px 24px;padding:16px;border-radius:10px}.legal-page h3{font-size:1rem;margin-top:20px}.legal-page p{font-size:.94rem}.legal-footer-links{gap:8px 16px;padding:14px 8px}.legal-footer-links a{font-size:.86rem}}
+
+
+/* Public quarterly issue archive and year/month filters */
+.published-issues-section{margin:34px auto 42px;padding:24px;background:linear-gradient(135deg,#fffdf8,#f7f0e4);border:1px solid #e7d8bd;border-radius:16px;box-shadow:0 8px 24px rgba(70,42,18,.07)}
+.published-issues-filter{display:flex;align-items:end;flex-wrap:wrap;gap:12px;margin:18px 0 8px;padding:15px;background:#fff;border:1px solid #eadfcf;border-radius:12px}
+.published-issues-filter label{display:flex;flex-direction:column;gap:6px;min-width:170px;flex:1;color:#694b2d;font-size:13px;font-weight:700}
+.published-issues-filter select{width:100%;min-height:42px;padding:8px 11px;border:1px solid #d8c6a8;border-radius:8px;background:#fffdf9;color:#392719;font:inherit}
+.published-issues-filter button{min-height:42px}
+.published-issues-result{margin:8px 2px 14px;color:#806747;font-size:12px}
+.published-issues-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px}
+.published-issue-card{display:flex;align-items:stretch;gap:14px;min-width:0;padding:13px;background:#fff;border:1px solid #eadfcf;border-radius:12px;box-shadow:0 3px 12px rgba(70,42,18,.05)}
+.published-issue-card>img,.published-issue-cover-fallback{width:104px;min-width:104px;min-height:142px;object-fit:cover;border-radius:7px;background:#5c0601;color:#f4dca4;display:flex;align-items:center;justify-content:center;text-align:center;font-family:serif;font-size:20px}
+.published-issue-info{display:flex;flex-direction:column;align-items:flex-start;gap:8px;min-width:0}
+.published-issue-info h3{margin:0;color:#4b160d;font-size:17px}
+.published-issue-info p{margin:0;line-height:1.55}
+.published-issue-info .work-read-link{margin-top:3px}
+.published-issue-download{display:inline-flex;align-items:center;justify-content:center;padding:8px 12px;border-radius:7px;background:#5c0601;color:#fff;text-decoration:none;font-size:13px;font-weight:700}
+.published-issue-download:hover{background:#7a160d}
+.published-issue-no-pdf{color:#8b765c;font-size:12px}
+@media(max-width:560px){.published-issues-section{padding:14px;margin-left:8px;margin-right:8px}.published-issues-filter{padding:11px}.published-issue-card{gap:10px;padding:10px}.published-issue-card>img,.published-issue-cover-fallback{width:82px;min-width:82px;min-height:118px}}
