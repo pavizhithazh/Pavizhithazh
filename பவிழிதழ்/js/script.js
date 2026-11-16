@@ -11,7 +11,14 @@ const PaviDB = (() => {
     Object.keys(grouped).forEach(id=>localStorage.setItem(`pavizhidhal_comments_${id}`,JSON.stringify(grouped[id])));
   }
   const indiaToday=()=>{const parts=new Intl.DateTimeFormat('en-GB',{timeZone:'Asia/Kolkata',year:'numeric',month:'2-digit',day:'2-digit'}).formatToParts(new Date());const part=type=>parts.find(item=>item.type===type)?.value||'';return `${part('year')}-${part('month')}-${part('day')}`;};
-  const isPublicReleaseDate=value=>{const date=String(value||'').trim().slice(0,10);if(!/^\d{4}-\d{2}-\d{2}$/.test(date))return true;return date<=indiaToday();};
+  const isPublicReleaseDate=value=>{const date=String(value||'').trim().slice(0,10);if(!/^\d{4}-\d{2}-\d{2}$/.test(date))return false;return date<=indiaToday();};
+  async function scheduleExistingPostsForNov25(){
+    const db=client(); if(!db) throw new Error('Supabase client load ஆகவில்லை.');
+    const {data,error}=await db.from('posts').update({display_date:'2026-11-25'}).eq('published',true).or('display_date.is.null,display_date.lt.2026-11-25').select('id');
+    fail(error);
+    await refreshAdminPosts();
+    return (data||[]).length;
+  }
   async function refreshAdminPosts() {
     const db=client(); if(!db) throw new Error('Supabase client load ஆகவில்லை. இணைய இணைப்பைச் சரிபார்க்கவும்.');
     const {data:posts,error}=await db.from('posts').select('*').eq('published',true).order('created_at',{ascending:false});
@@ -115,7 +122,7 @@ const PaviDB = (() => {
   async function login(email,password){const {data,error}=await client().auth.signInWithPassword({email,password});fail(error);const {data:allowed,error:ae}=await client().rpc('pavizhidhal_is_admin');if(ae || allowed!==true){await client().auth.signOut();throw new Error('இந்தக் கணக்கிற்கு Admin அனுமதி இல்லை. admin_users அட்டவணையில் user_id சேர்க்கப்பட்டுள்ளதா பார்க்கவும்.');}return data;}
   async function logout(){const {error}=await client().auth.signOut();fail(error);}
   async function isAdmin(){const {data:{session}}=await client().auth.getSession();if(!session)return false;const {data,error}=await client().rpc('pavizhidhal_is_admin');return !error && data===true;}
-  return {init,refreshPosts,refreshAdminPosts,loadComments,savePosts,deletePost,addComment,deleteComment,approveComment,saveSetting,getWebsiteUpdatedDate,saveWebsiteUpdatedDate,upload,uploadCertificateFile,removeCertificateFile,certificatePublicUrl,listCertificateFiles,createCertificateFileRecord,setCertificatePublished,deleteCertificateFileRecord,login,logout,isAdmin};
+  return {init,refreshPosts,refreshAdminPosts,scheduleExistingPostsForNov25,loadComments,savePosts,deletePost,addComment,deleteComment,approveComment,saveSetting,getWebsiteUpdatedDate,saveWebsiteUpdatedDate,upload,uploadCertificateFile,removeCertificateFile,certificatePublicUrl,listCertificateFiles,createCertificateFileRecord,setCertificatePublished,deleteCertificateFileRecord,login,logout,isAdmin};
 })();
 
 async function persistPaviSetting(localKey, value) {
@@ -1019,7 +1026,7 @@ async function initAdminPanel(){
     try{
       await PaviDB.login(overlay.querySelector('#adminLoginEmail').value.trim(),overlay.querySelector('#adminLoginPassword').value);
       await PaviDB.loadComments();
-      await PaviDB.refreshAdminPosts();
+      await PaviDB.scheduleExistingPostsForNov25();
       sessionStorage.setItem('pavizhidhal_admin_logged','true');
       overlay.remove();document.body.classList.remove('admin-auth-open');
       await initAdminDashboard();
