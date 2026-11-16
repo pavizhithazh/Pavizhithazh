@@ -647,10 +647,35 @@ function renderHomepageEditorial() {
   const monthLabel = document.getElementById('issueMonthLabel');
   const issueHeading = document.getElementById('issueHeading');
   const qIssues=safeParseJSON(localStorage.getItem('pavizhidhal_quarterly_issues'),[]);
-  const publicIssues=(Array.isArray(qIssues)?qIssues:[]).filter(x=>x.status==='published').slice().sort((a,b)=>(b.publishDate||'').localeCompare(a.publishDate||''));
+  const publicIssues=(Array.isArray(qIssues)?qIssues:[]).filter(x=>x.status==='published').slice().sort((a,b)=>{
+    const ay=Number(a.year)||0, by=Number(b.year)||0, am=Number(a.month)||0, bm=Number(b.month)||0;
+    return by-ay || bm-am || String(b.publishDate||'').localeCompare(String(a.publishDate||''));
+  });
   const latestIssue=publicIssues[0]||null;
   const issueList=document.getElementById('publishedQuarterIssues');
-  if(issueList){issueList.innerHTML=publicIssues.length?publicIssues.map((item,index)=>{const cover=item.frontCoverUrl?'<img src="'+escapeHTML(item.frontCoverUrl)+'" alt="இதழ் அட்டைப்படம்">':'<div class="published-issue-cover-fallback">பவிழிதழ்</div>';const pdf=item.pdfUrl?'<a class="work-read-link" href="'+escapeHTML(item.pdfUrl)+'" target="_blank" rel="noopener">PDF பதிவிறக்க / அச்சிட ↗</a>':'';return '<article class="published-issue-card">'+cover+'<div class="published-issue-info"><p class="work-category">காலாண்டு இதழ் · '+escapeHTML(item.year)+' · '+escapeHTML(item.monthName||'')+'</p><h3>'+escapeHTML(item.coverTitle||item.title||'பவிழிதழ்')+'</h3>'+(item.theme?'<p>'+escapeHTML(item.theme)+'</p>':'')+'<a class="work-read-link" href="issue-print.html?id='+encodeURIComponent(item.id)+'">இதழை வாசிக்க / அச்சிட ↗</a>'+pdf+'</div></article>';}).join(''):'<div class="editorial-empty">இன்னும் நிர்வாக அனுமதியுடன் இதழ்கள் வெளியிடப்படவில்லை.</div>';}
+  const yearFilter=document.getElementById('publishedIssueYear');
+  const monthFilter=document.getElementById('publishedIssueMonth');
+  const resultLabel=document.getElementById('publishedIssuesResult');
+  const renderPublicIssueCards=()=>{
+    if(!issueList)return;
+    const selectedYear=yearFilter?.value||'all', selectedMonth=monthFilter?.value||'all';
+    const visible=publicIssues.filter(item=>(selectedYear==='all'||String(item.year)===selectedYear)&&(selectedMonth==='all'||String(item.month)===selectedMonth));
+    if(resultLabel)resultLabel.textContent=visible.length?String(visible.length)+' இதழ்கள் காண்பிக்கப்படுகின்றன':'தேர்ந்தெடுத்த காலத்தில் இதழ்கள் இல்லை.';
+    issueList.innerHTML=visible.length?visible.map(item=>{
+      const cover=item.frontCoverUrl?'<img src="'+escapeHTML(item.frontCoverUrl)+'" alt="இதழ் அட்டைப்படம்">':'<div class="published-issue-cover-fallback">பவிழிதழ்</div>';
+      const pdf=item.pdfUrl?'<a class="published-issue-download" href="'+escapeHTML(item.pdfUrl)+'" target="_blank" rel="noopener" download>PDF பதிவிறக்கம் ↓</a>':'<span class="published-issue-no-pdf">PDF விரைவில் சேர்க்கப்படும்</span>';
+      return '<article class="published-issue-card">'+cover+'<div class="published-issue-info"><p class="work-category">காலாண்டு இதழ் · '+escapeHTML(item.year)+' · '+escapeHTML(item.monthName||'')+'</p><h3>'+escapeHTML(item.coverTitle||item.title||'பவிழிதழ்')+'</h3>'+(item.theme?'<p>'+escapeHTML(item.theme)+'</p>':'')+'<a class="work-read-link" href="issue-print.html?id='+encodeURIComponent(item.id)+'">இதழை வாசிக்க / அச்சிட ↗</a>'+pdf+'</div></article>';
+    }).join(''):'<div class="editorial-empty">தேர்ந்தெடுத்த காலத்தில் வெளியிடப்பட்ட இதழ்கள் இல்லை.</div>';
+  };
+  if(yearFilter){
+    const current=yearFilter.value||'all', years=[...new Set(publicIssues.map(x=>String(x.year)).filter(x=>x&&x!=='0'))].sort((a,b)=>Number(b)-Number(a));
+    yearFilter.innerHTML='<option value="all">அனைத்து ஆண்டுகள்</option>'+years.map(y=>'<option value="'+escapeHTML(y)+'">'+escapeHTML(y)+'</option>').join('');
+    yearFilter.value=years.includes(current)?current:'all';
+    yearFilter.onchange=renderPublicIssueCards;
+  }
+  if(monthFilter)monthFilter.onchange=renderPublicIssueCards;
+  document.getElementById('clearPublishedIssueFilters')?.addEventListener('click',()=>{if(yearFilter)yearFilter.value='all';if(monthFilter)monthFilter.value='all';renderPublicIssueCards();});
+  renderPublicIssueCards();
   const quarterLabel=latestIssue?`${latestIssue.year} · ${latestIssue.monthName||latestIssue.monthLabel||'காலாண்டு'} இதழ்`:'ஜனவரி · ஏப்ரல் · ஜூலை · அக்டோபர்';
   if (monthLabel) monthLabel.textContent = quarterLabel;
   if (issueHeading) issueHeading.textContent = `காலாண்டு இலக்கிய இதழ் – பவிழிதழ்`;
