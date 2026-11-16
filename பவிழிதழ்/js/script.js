@@ -218,6 +218,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   }
 
   if (pageCategory === 'home') renderHomepageEditorial();
+  if (pageCategory === 'archives') renderPublicQuarterlyArchive();
   loadContestsAndWinners();
 });
 
@@ -815,10 +816,47 @@ function applySavedSiteSettings(){
   if(category==='home'&&pages.home){const hero=document.querySelector('.library-copy h2');const para=document.querySelector('.library-copy>p:not(.library-eyebrow)');const homeIntro='ஜனவரி, ஏப்ரல், ஜூலை, அக்டோபர் மாதங்களில் வெளியாகும் தமிழ் இலக்கியப் படைப்புகளின் சங்கமம். முதல் இதழ் ஜனவரி 2027-ல் வெளியாகிறது.';if(hero&&pages.home.title&&!/பழைய நூலகம்|அறிவின் பழைய/.test(pages.home.title))hero.textContent=pages.home.title;if(para)para.textContent=homeIntro;const pageIntro=document.querySelector('main .page-custom-intro');if(pageIntro)pageIntro.textContent=homeIntro;}
 }
 function renderIssueDownloadLink(){
- const issues=getSettingCollection('pavizhidhal_quarterly_issues').slice().sort((a,b)=>(b.publishDate||'').localeCompare(a.publishDate||''));
- const latest=issues[0]; const intro=document.querySelector('.issue-intro'); if(!intro)return;
- let link=document.getElementById('issuePdfDownload'); if(!link){link=document.createElement('a');link.id='issuePdfDownload';link.className='issue-read-link';link.style.marginLeft='10px';intro.appendChild(link);}
- if(latest&&latest.pdfUrl){link.href=latest.pdfUrl;link.target='_blank';link.rel='noopener';link.textContent='காலாண்டு இதழ் PDF-ஐ வாசிக்க / பதிவிறக்க ↓';link.hidden=false;}else link.hidden=true;
+ const intro=document.querySelector('.issue-intro'); if(!intro)return;
+ let link=document.getElementById('issuePdfDownload');
+ if(!link){link=document.createElement('a');link.id='issuePdfDownload';link.className='issue-read-link';intro.appendChild(link);}
+ link.href='archives.html#publishedQuarterIssues';
+ link.removeAttribute('target');link.removeAttribute('rel');link.removeAttribute('download');
+ link.textContent='வெளியான இதழ்கள் மற்றும் PDF பதிவிறக்கங்கள் – Archives ↗';
+ link.hidden=false;
+}
+function renderPublicQuarterlyArchive(){
+ const list=document.getElementById('publishedQuarterIssues');
+ const yearFilter=document.getElementById('publishedIssueYear');
+ const monthFilter=document.getElementById('publishedIssueMonth');
+ const result=document.getElementById('publishedIssuesResult');
+ if(!list)return;
+ const issues=(Array.isArray(getSettingCollection('pavizhidhal_quarterly_issues'))?getSettingCollection('pavizhidhal_quarterly_issues'):[])
+  .filter(item=>item.status==='published')
+  .slice().sort((a,b)=>(Number(b.year)||0)-(Number(a.year)||0)||(Number(b.month)||0)-(Number(a.month)||0)||String(b.publishDate||'').localeCompare(String(a.publishDate||'')));
+ const years=[...new Set(issues.map(x=>String(x.year||'')).filter(Boolean))].sort((a,b)=>Number(b)-Number(a));
+ if(yearFilter){
+  const selected=yearFilter.value||'all';
+  yearFilter.innerHTML='<option value="all">அனைத்து ஆண்டுகள்</option>'+years.map(y=>'<option value="'+escapeHTML(y)+'">'+escapeHTML(y)+'</option>').join('');
+  yearFilter.value=years.includes(selected)?selected:'all';
+ }
+ const draw=()=>{
+  const y=yearFilter?.value||'all',m=monthFilter?.value||'all';
+  const visible=issues.filter(x=>(y==='all'||String(x.year)===y)&&(m==='all'||String(x.month)===m));
+  if(result)result.textContent=visible.length?visible.length+' வெளியான இதழ்கள் காண்பிக்கப்படுகின்றன.':'தேர்ந்தெடுத்த ஆண்டில் / மாதத்தில் இதழ்கள் இல்லை.';
+  const groups={};
+  visible.forEach(item=>{const key=String(item.year||'ஆண்டு குறிப்பிடப்படவில்லை');(groups[key] ||= []).push(item);});
+  list.innerHTML=visible.length?Object.keys(groups).sort((a,b)=>Number(b)-Number(a)).map(year=>
+   '<section class="archive-year-group"><h2 class="page-heading">'+escapeHTML(year)+' <small>ஆண்டு இதழ்கள்</small></h2><div class="published-issues-grid">'+groups[year].map(item=>{
+    const cover=item.frontCoverUrl?'<img src="'+escapeHTML(item.frontCoverUrl)+'" alt="'+escapeHTML(item.coverTitle||'பவிழிதழ் இதழ் அட்டை')+'">':'<div class="published-issue-cover-fallback">பவிழிதழ்</div>';
+    const pdf=item.pdfUrl?'<a class="published-issue-download" href="'+escapeHTML(item.pdfUrl)+'" target="_blank" rel="noopener" download>PDF பதிவிறக்கம் ↓</a>':'<span class="published-issue-no-pdf">PDF இன்னும் பதிவேற்றப்படவில்லை</span>';
+    return '<article class="published-issue-card">'+cover+'<div class="published-issue-info"><p class="work-category">'+escapeHTML(item.year)+' · '+escapeHTML(item.monthName||quarterMonthName(item.month))+' · தொகுதி '+escapeHTML(item.year)+' / இதழ் '+escapeHTML(item.issueNumber||'')+'</p><h3>'+escapeHTML(item.coverTitle||item.title||'பவிழிதழ்')+'</h3>'+(item.theme?'<p>'+escapeHTML(item.theme)+'</p>':'')+'<a class="work-read-link" href="issue-print.html?id='+encodeURIComponent(item.id)+'">இதழை வாசிக்க / அச்சிட ↗</a>'+pdf+'</div></article>';
+   }).join('')+'</div></section>'
+  ).join(''):'<div class="editorial-empty">இதுவரை பொதுவில் வெளியிடப்பட்ட இதழ்கள் இல்லை. இதழ்கள் வெளியிடப்பட்டதும் ஆண்டு வாரியாக இங்கு தானாகச் சேர்க்கப்படும்.</div>';
+ };
+ yearFilter?.addEventListener('change',draw);
+ monthFilter?.addEventListener('change',draw);
+ document.getElementById('clearPublishedIssueFilters')?.addEventListener('click',()=>{if(yearFilter)yearFilter.value='all';if(monthFilter)monthFilter.value='all';draw();});
+ draw();
 }
 function quarterMonthName(month){return ({1:'ஜனவரி',4:'ஏப்ரல்',7:'ஜூலை',10:'அக்டோபர்',3:'மார்ச்',6:'ஜூன்',9:'செப்டம்பர்',12:'டிசம்பர்'})[Number(month)]||'காலாண்டு';}
 function lastSundayOfMonth(year,month){const d=new Date(Number(year),Number(month),0);d.setDate(d.getDate()-d.getDay());const y=d.getFullYear(),m=String(d.getMonth()+1).padStart(2,'0'),day=String(d.getDate()).padStart(2,'0');return `${y}-${m}-${day}`;}
