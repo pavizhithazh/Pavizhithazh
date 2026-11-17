@@ -52,7 +52,7 @@ module.exports = async function handler(req, res) {
         '<title>' + xmlEscape(post.title || 'தலைப்பிடப்படாத படைப்பு') + '</title>',
         '<link>' + xmlEscape(url) + '</link>',
         '<guid isPermaLink="true">' + xmlEscape(url) + '</guid>',
-        '<author>' + xmlEscape(post.author || 'பவிழிதழ் வாசகர்') + '</author>',
+        '<dc:creator>' + xmlEscape(post.author || 'பவிழிதழ் வாசகர்') + '</dc:creator>',
         '<category>' + xmlEscape(categoryName(post.category)) + '</category>',
         '<pubDate>' + xmlEscape(asRfc822(published)) + '</pubDate>',
         '<description>' + xmlEscape(description) + '</description>',
@@ -61,7 +61,7 @@ module.exports = async function handler(req, res) {
     }).join('\n');
 
     const feed = '<?xml version="1.0" encoding="UTF-8"?>\n' +
-      '<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel>' +
+      '<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:dc="http://purl.org/dc/elements/1.1/"><channel>' +
       '<title>பவிழிதழ் – தமிழ் இலக்கிய இதழ்</title>' +
       '<link>' + SITE_URL + '</link>' +
       '<description>பவிழிதழில் நிர்வாகத்தால் வெளியிடப்பட்ட புதிய கவிதைகள், சிறுகதைகள், கட்டுரைகள் மற்றும் இலக்கியப் படைப்புகள்.</description>' +
