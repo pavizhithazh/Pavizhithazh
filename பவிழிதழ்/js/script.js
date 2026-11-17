@@ -326,7 +326,7 @@ function indiaDateParts(date=new Date()){
 }
 async function initVisitorStats(){
   const panel=document.getElementById('visitorStatsPanel');if(!panel)return;
-  const siteCounter=getSiteSettings().goatCounterCode||window.PAVIZHIDHAL_GOATCOUNTER_CODE||'';const code=String(siteCounter).trim();
+  const configuredCode=String(window.PAVIZHIDHAL_GOATCOUNTER_CODE||'').trim();const savedCode=String(getSiteSettings().goatCounterCode||'').trim();const validCode=value=>/^[a-z0-9-]+$/i.test(value);const code=validCode(configuredCode)?configuredCode:(validCode(savedCode)?savedCode:'');
   const format=(n)=>n==null?'—':String(n);
   panel.innerHTML='<div class="visitor-stat-heading"><strong>பவிழிதழ் வாசகர் வருகைகள்</strong><span>வருகைக் கணக்கு</span></div><div class="visitor-stat-grid"><div class="visitor-stat"><small>இன்றைய வருகைகள்</small><strong data-vis-today>—</strong></div><div class="visitor-stat"><small>இந்த மாத வருகைகள்</small><strong data-vis-month>—</strong></div><div class="visitor-stat"><small>இந்தக் காலாண்டு வருகைகள்</small><strong data-vis-quarter>—</strong></div></div><p class="visitor-stat-note" data-vis-note></p>';
   const note=panel.querySelector('[data-vis-note]');
