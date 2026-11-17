@@ -1,31 +1,5 @@
 const fixPaviName=s=>String(s==null?'':s).replace(/[ஈஇ]ரா\\.\\s*பவித்ரா/g,'இரா.பவித்ரா');
 
-/* RSS discovery and reader link on every public page */
-(function addPavizhithazhRssLinks(){
-  if (/\\/admin(?:\\.html)?$/i.test(window.location.pathname)) return;
-  const feedUrl='https://www.pavizhithazh.com/feed.xml';
-  if (!document.querySelector('link[rel="alternate"][type="application/rss+xml"]')) {
-    const link=document.createElement('link');
-    link.rel='alternate'; link.type='application/rss+xml';
-    link.title='பவிழிதழ் – தமிழ் இலக்கிய RSS Feed'; link.href=feedUrl;
-    document.head.appendChild(link);
-  }
-  const addFooterLink=()=>{
-    const footer=document.querySelector('footer');
-    if(!footer || footer.querySelector('.pavizhithazh-rss-link')) return;
-    const link=document.createElement('a');
-    link.className='pavizhithazh-rss-link'; link.href=feedUrl;
-    link.target='_blank'; link.rel='noopener';
-    link.setAttribute('aria-label','பவிழிதழ் RSS Feed திறக்க');
-    link.innerHTML='<span aria-hidden="true">◔</span> RSS Feed';
-    link.style.cssText='display:inline-flex;align-items:center;gap:6px;margin:8px;padding:7px 12px;border:1px solid currentColor;border-radius:20px;text-decoration:none;font-weight:600;';
-    const links=footer.querySelector('.footer-links');
-    if(links) links.appendChild(link);
-    else { const legal=footer.querySelector('.legal-footer-links'); footer.insertBefore(link,legal||null); }
-  };
-  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',addFooterLink,{once:true});
-  else addFooterLink();
-})();
 /* SUPABASE DATA LAYER */
 const PaviDB = (() => {
   const client = () => window.pavizhidhalSupabase;
