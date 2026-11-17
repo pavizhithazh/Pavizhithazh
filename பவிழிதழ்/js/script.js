@@ -458,13 +458,22 @@ function loadCategoryPosts(category) {
   });
 }
 
-function applyPaviSeo(title,description,url,type,author){
+function applyPaviSeo(title,description,url,type,author,work){
+ const cleanDescription=String(description||'').replace(/<[^>]*>/g,' ').replace(/&nbsp;/g,' ').replace(/\s+/g,' ').trim().slice(0,180);
+ const seoDescription=cleanDescription||'பவிழிதழில் வெளியாகும் தமிழ் இலக்கியப் படைப்புகளை வாசிக்கவும். கவிதைகள், சிறுகதைகள், கட்டுரைகள் மற்றும் பல படைப்புகள்.';
  document.title=title;
  const meta=(key,value,property)=>{let el=document.head.querySelector('meta['+(property?'property':'name')+'="'+key+'"]');if(!el){el=document.createElement('meta');el.setAttribute(property?'property':'name',key);document.head.appendChild(el);}el.content=value;};
- meta('description',description.slice(0,300),false);meta('og:title',title,true);meta('og:description',description.slice(0,300),true);meta('og:type',type==='CreativeWork'?'article':'profile',true);meta('og:url',url,true);
+ meta('description',seoDescription,false);
+ meta('og:title',title,true);meta('og:description',seoDescription,true);meta('og:type',type==='CreativeWork'?'article':'profile',true);meta('og:url',url,true);
+ meta('twitter:card','summary_large_image',false);meta('twitter:title',title,false);meta('twitter:description',seoDescription,false);
+ if(work&&work.image){meta('og:image',work.image,true);meta('twitter:image',work.image,false);}
  let canonical=document.head.querySelector('link[rel="canonical"]');if(!canonical){canonical=document.createElement('link');canonical.rel='canonical';document.head.appendChild(canonical);}canonical.href=url;
  let ld=document.getElementById('pavizhithazh-seo-jsonld');if(!ld){ld=document.createElement('script');ld.id='pavizhithazh-seo-jsonld';ld.type='application/ld+json';document.head.appendChild(ld);}
- ld.textContent=JSON.stringify({'@context':'https://schema.org','@type':type,'headline':title,'name':title,'description':description.slice(0,300),'url':url,'inLanguage':'ta','publisher':{'@type':'Organization','name':'பவிழிதழ்','url':'https://www.pavizhithazh.com/'},...(author?{'author':{'@type':'Person','name':author}}:{})});
+ const structuredData={'@context':'https://schema.org','@type':type,'headline':title,'name':title,'description':seoDescription,'url':url,'inLanguage':'ta','publisher':{'@type':'Organization','name':'பவிழிதழ்','url':'https://www.pavizhithazh.com/'},...(author?{'author':{'@type':'Person','name':author}}:{})};
+ if(work&&work.date){structuredData.datePublished=work.date;}
+ if(work&&work.image){structuredData.image=work.image;}
+ if(type==='CreativeWork'){structuredData.mainEntityOfPage={'@type':'WebPage','@id':url};}
+ ld.textContent=JSON.stringify(structuredData);
 }
 
 function renderReadPage(){
@@ -474,8 +483,9 @@ function renderReadPage(){
   const post=getStoredPosts().find(p=>String(p.id)===String(id));
   if(!post){container.innerHTML='<div class="coming-soon-box"><h2>இந்தப் படைப்பைக் கண்டறிய முடியவில்லை.</h2><p>முகப்புப் பக்கத்திற்குச் சென்று மீண்டும் தேர்ந்தெடுக்கவும்.</p><a class="issue-read-link" href="index.html">முகப்பிற்குத் திரும்பு</a></div>';return;}
   const workUrl='https://www.pavizhithazh.com/read.html?id='+encodeURIComponent(String(post.id));
-  const workDescription=String(post.content||'').replace(/\s+/g,' ').trim().slice(0,280)||('பவிழிதழில் வெளியான '+getCategoryName(post.category));
-  applyPaviSeo(`${post.title||'இலக்கியப் படைப்பு'} – ${post.author||'பவிழிதழ்'} | பவிழிதழ்`,workDescription,workUrl,'CreativeWork',post.author||'');
+  const workText=String(post.content||'').replace(/<[^>]*>/g,' ').replace(/&nbsp;/g,' ').replace(/\s+/g,' ').trim();
+  const workDescription=workText.slice(0,180)||(`பவிழிதழில் வெளியாகும் ${getCategoryName(post.category)}. ${post.title||'தமிழ் இலக்கியப் படைப்பு'} – ${post.author||'பவிழிதழ்'}.`);
+  applyPaviSeo(`${post.title||'இலக்கியப் படைப்பு'} – ${post.author||'பவிழிதழ்'} | பவிழிதழ்`,workDescription,workUrl,'CreativeWork',post.author||'',{date:post.date||post.createdAt||'',image:post.image||''});
   const theme=categoryTheme(post.category);
   const image=post.image?`<img class="reading-illustration" src="${escapeHTML(post.image)}" alt="${escapeHTML(post.title)}">`:'';
   const isChildren=post.category==='kulandhai';
