@@ -1,5 +1,12 @@
 {
   "rewrites": [
-    { "source": "/feed.xml", "destination": "/api/feed" }
+    {
+      "source": "/feed.xml",
+      "destination": "/api/feed"
+    },
+    {
+      "source": "/sitemap.xml",
+      "destination": "/api/sitemap"
+    }
   ]
 }
