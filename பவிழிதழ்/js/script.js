@@ -481,7 +481,11 @@ function renderReadPage(){
   if(!container)return;
   const id=new URLSearchParams(location.search).get('id');
   const post=getStoredPosts().find(p=>String(p.id)===String(id));
-  if(!post){container.innerHTML='<div class="coming-soon-box"><h2>இந்தப் படைப்பைக் கண்டறிய முடியவில்லை.</h2><p>முகப்புப் பக்கத்திற்குச் சென்று மீண்டும் தேர்ந்தெடுக்கவும்.</p><a class="issue-read-link" href="index.html">முகப்பிற்குத் திரும்பு</a></div>';return;}
+  if(!post){
+    // Keep server-rendered work content intact if the browser cache/API is unavailable.
+    if(container.querySelector('.reading-sheet h1'))return;
+    container.innerHTML='<div class="coming-soon-box"><h2>இந்தப் படைப்பைக் கண்டறிய முடியவில்லை.</h2><p>முகப்புப் பக்கத்திற்குச் சென்று மீண்டும் தேர்ந்தெடுக்கவும்.</p><a class="issue-read-link" href="index.html">முகப்பிற்குத் திரும்பு</a></div>';return;
+  }
   const workUrl='https://www.pavizhithazh.com/read.html?id='+encodeURIComponent(String(post.id));
   const workText=String(post.content||'').replace(/<[^>]*>/g,' ').replace(/&nbsp;/g,' ').replace(/\s+/g,' ').trim();
   const workDescription=workText.slice(0,180)||(`பவிழிதழில் வெளியாகும் ${getCategoryName(post.category)}. ${post.title||'தமிழ் இலக்கியப் படைப்பு'} – ${post.author||'பவிழிதழ்'}.`);
