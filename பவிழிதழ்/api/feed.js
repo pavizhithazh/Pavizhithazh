@@ -26,7 +26,7 @@ module.exports = async function handler(req, res) {
     const endpoint = new URL('/rest/v1/posts', SUPABASE_URL);
     endpoint.search = new URLSearchParams({
       select: 'id,title,author,category,content,display_date,created_at',
-      published: 'eq.true',
+      
       order: 'created_at.desc',
       limit: '1000'
     }).toString();
