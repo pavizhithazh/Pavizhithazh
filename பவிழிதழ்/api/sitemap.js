@@ -6,7 +6,7 @@ module.exports=async function handler(req,res){
  if(req.method!=='GET'&&req.method!=='HEAD'){res.setHeader('Allow','GET, HEAD');return res.status(405).send('Method Not Allowed');}
  try{
   const url=new URL('/rest/v1/posts',SUPABASE_URL);
-  url.search=new URLSearchParams({select:'id,author,created_at',published:'eq.true',order:'created_at.desc',limit:'5000'}).toString();
+  url.search=new URLSearchParams({select:'id,author,created_at',order:'created_at.desc',limit:'5000'}).toString();
   const response=await fetch(url,{headers:{apikey:SUPABASE_PUBLIC_KEY,Authorization:'Bearer '+SUPABASE_PUBLIC_KEY,Accept:'application/json'}});
   if(!response.ok){console.error('Sitemap Supabase response:',response.status,await response.text());return res.status(502).send('Sitemap temporarily unavailable');}
   const posts=await response.json();
