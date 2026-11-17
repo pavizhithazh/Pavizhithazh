@@ -1,0 +1,33 @@
+const SUPABASE_URL='https://guuowevezqqscpppehcr.supabase.co';
+const SUPABASE_PUBLIC_KEY='sb_publishable_HonZEhmBJBT5N34Ub3XAIg_UWZPKGkD';
+const SITE='https://www.pavizhithazh.com';
+const esc=value=>String(value??'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+const categories={kavithai:'கவிதை',kathai:'சிறுகதை',katturai:'கட்டுரை',aaivukatturai:'ஆய்வுக் கட்டுரை',kulandhai:'குழந்தை இலக்கியம்'};
+const themes={kavithai:'theme-kavithai',kathai:'theme-kathai',katturai:'theme-katturai',aaivukatturai:'theme-aaivukatturai',kulandhai:'theme-kulandhai'};
+module.exports=async function handler(req,res){
+ if(req.method!=='GET'&&req.method!=='HEAD'){res.setHeader('Allow','GET, HEAD');return res.status(405).send('Method Not Allowed');}
+ const id=String(req.query?.id||'').trim();
+ if(!id||id.length>200)return res.status(400).send('படைப்பு எண் சரியாக இல்லை.');
+ try{
+  const endpoint=new URL('/rest/v1/posts',SUPABASE_URL);
+  endpoint.search=new URLSearchParams({select:'id,title,author,category,content,author_avatar_url,image_url,display_date,created_at',id:'eq.'+id,limit:'1'}).toString();
+  const response=await fetch(endpoint,{headers:{apikey:SUPABASE_PUBLIC_KEY,Authorization:'Bearer '+SUPABASE_PUBLIC_KEY,Accept:'application/json'}});
+  if(!response.ok){console.error('Read page Supabase response:',response.status,await response.text());return res.status(502).send('படைப்பை இப்போது ஏற்ற முடியவில்லை.');}
+  const rows=await response.json(),post=Array.isArray(rows)?rows[0]:null;
+  if(!post)return res.status(404).send('<!doctype html><html lang="ta"><meta charset="utf-8"><title>படைப்பு கிடைக்கவில்லை – பவிழிதழ்</title><body><h1>இந்தப் படைப்பைக் கண்டறிய முடியவில்லை.</h1><a href="/">முகப்பிற்குத் திரும்பு</a></body></html>');
+  const category=categories[post.category]||'இலக்கியப் படைப்பு';
+  const title=(post.title||'இலக்கியப் படைப்பு')+' – '+(post.author||'பவிழிதழ்')+' | பவிழிதழ்';
+  const plain=String(post.content||'').replace(/<[^>]*>/g,' ').replace(/&nbsp;/g,' ').replace(/&amp;/g,'&').replace(/\s+/g,' ').trim();
+  const description=(plain||('பவிழிதழில் வெளியாகும் '+category+' – '+(post.author||'பவிழிதழ்'))).slice(0,180);
+  const canonical=SITE+'/read.html?id='+encodeURIComponent(String(post.id));
+  const date=post.display_date||post.created_at||'',image=post.image_url||'';
+  const ld={'@context':'https://schema.org','@type':'CreativeWork','headline':post.title||'இலக்கியப் படைப்பு','name':post.title||'இலக்கியப் படைப்பு','description':description,'url':canonical,'inLanguage':'ta','author':{'@type':'Person','name':post.author||'எழுத்தாளர்'},'publisher':{'@type':'Organization','name':'பவிழிதழ்','url':SITE+'/'},'mainEntityOfPage':{'@type':'WebPage','@id':canonical},...(date?{'datePublished':date}:{}),...(image?{'image':image}:{})};
+  const body=String(post.content||'').split(/\r?\n/).map(line=>esc(line)).join('<br>');
+  const illustration=image?'<img class="reading-illustration" src="'+esc(image)+'" alt="'+esc(post.title||'படைப்பு')+'">':'';
+  const html='<!DOCTYPE html><html lang="ta"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>'+esc(title)+'</title><meta name="description" content="'+esc(description)+'"><link rel="canonical" href="'+esc(canonical)+'"><meta property="og:type" content="article"><meta property="og:title" content="'+esc(title)+'"><meta property="og:description" content="'+esc(description)+'"><meta property="og:url" content="'+esc(canonical)+'">'+(image?'<meta property="og:image" content="'+esc(image)+'">':'')+'<meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="'+esc(title)+'"><meta name="twitter:description" content="'+esc(description)+'"><link href="/css/styles.css" rel="stylesheet"><script type="application/ld+json">'+JSON.stringify(ld).replace(/</g,'\\u003c')+'</script><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4729946251252363" crossorigin="anonymous"></script></head><body data-category="read"><header class="reader-header"><a class="reader-home" href="/">❧ பவிழிதழ்</a><p>பழமையின் வாசிப்பில் புதிய படைப்புகள் · <a href="/certificates.html">சான்றிதழ்கள்</a></p></header><main class="container reader-container"><div id="readingContainer"><div class="reading-topline"><a href="/" class="issue-read-link">← முந்தைய பக்கம்</a><span>'+esc(category)+'</span></div><div class="reading-stage"><article class="reading-sheet '+(themes[post.category]||'theme-kavithai')+'"><p class="reading-kicker">❧ பவிழிதழ் · '+esc(category)+' ❧</p><h1>'+esc(post.title||'தலைப்பிடப்படாத படைப்பு')+'</h1><p class="reading-byline">'+esc(post.author||'எழுத்தாளர்')+' · '+esc(date)+'</p>'+illustration+'<div class="reading-body">'+body+'</div><div class="reading-signature">❧ ✦ ❧</div></article></div><div class="reading-actions"><a class="issue-read-link" href="https://api.whatsapp.com/send?text='+encodeURIComponent((post.title||'படைப்பு')+' – பவிழிதழ் '+canonical)+'" target="_blank" rel="noopener">WhatsApp-ல் பகிர்</a><a class="issue-read-link" href="/author.html?name='+encodeURIComponent(post.author||'')+'">எழுத்தாளர் படைப்புகள்</a></div><section class="reading-comments post-card"><h2>வாசகர் கருத்துகள்</h2><div id="comments-list-'+esc(post.id)+'"></div><div class="reading-comment-form"><input id="comment-user-'+esc(post.id)+'" placeholder="உங்கள் பெயர்"><textarea id="comment-text-'+esc(post.id)+'" placeholder="உங்கள் கருத்தை எழுதுங்கள்"></textarea><button class="admin-primary" onclick="addComment('+JSON.stringify(String(post.id))+')">கருத்தைப் பதிவிடு</button></div></section></div></main><footer><p class="footer-founder"><strong>நிறுவனர் மற்றும் ஒருங்கிணைப்பாளர்:</strong> கவிஞர், எழுத்தாளர் செல்வி இரா.பவித்ரா</p><p class="footer-contact-standard">பவிழிதழ் குழுவினர்</p><nav class="legal-footer-links" aria-label="சட்ட மற்றும் தகவல் இணைப்புகள்"><a href="/privacy-policy.html">தனியுரிமைக் கொள்கை</a><a href="/terms.html">பயன்பாட்டு விதிமுறைகள்</a><a href="/about.html">தொடர்பு</a></nav></footer><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="/js/supabase-config.js"></script><script src="/js/analytics-config.js"></script><script src="/js/script.js"></script></body></html>';
+  res.setHeader('Content-Type','text/html; charset=utf-8');
+  res.setHeader('Cache-Control','public, s-maxage=300, stale-while-revalidate=600');
+  if(req.method==='HEAD')return res.status(200).end();
+  return res.status(200).send(html);
+ }catch(error){console.error('Read page render error:',error);return res.status(500).send('படைப்பை இப்போது ஏற்ற முடியவில்லை.');}
+};
