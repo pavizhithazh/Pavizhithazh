@@ -40,7 +40,8 @@ module.exports = async function handler(req, res) {
     if (!response.ok) {
       const detail = await response.text();
       console.error('RSS Supabase response:', response.status, detail);
-      return res.status(502).type('text/plain; charset=utf-8').send('RSS feed is temporarily unavailable.');
+      res.setHeader('Content-Type', 'text/plain; charset=utf-8');
+      return res.status(502).send('RSS feed is temporarily unavailable.');
     }
     const posts = await response.json();
     const items = (Array.isArray(posts) ? posts : []).map(post => {
@@ -76,6 +77,7 @@ module.exports = async function handler(req, res) {
     return res.status(200).send(feed);
   } catch (error) {
     console.error('RSS feed error:', error);
-    return res.status(500).type('text/plain; charset=utf-8').send('RSS feed is temporarily unavailable.');
+    res.setHeader('Content-Type', 'text/plain; charset=utf-8');
+    return res.status(500).send('RSS feed is temporarily unavailable.');
   }
 };
