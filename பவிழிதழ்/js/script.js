@@ -652,8 +652,6 @@ function loadAuthorProfile() {
   if (authorTitle) authorTitle.textContent = `${authorName} அவர்களின் படைப்புத் தொகுப்பு`;
   const authorUrl='https://www.pavizhithazh.com/author.html?name='+encodeURIComponent(authorName);
   applyPaviSeo(`${authorName} – எழுத்தாளர் படைப்புகள் | பவிழிதழ்`,`${authorName} அவர்களின் பவிழிதழில் வெளியான கவிதைகள், சிறுகதைகள், கட்டுரைகள் மற்றும் இலக்கியப் படைப்புகள்.`,authorUrl,'ProfilePage',authorName);
-  const authorUrl='https://www.pavizhithazh.com/author.html?name='+encodeURIComponent(authorName);
-  applyPaviSeo(`${authorName} – எழுத்தாளர் படைப்புகள் | பவிழிதழ்`,`${authorName} அவர்களின் பவிழிதழில் வெளியான கவிதைகள், சிறுகதைகள், கட்டுரைகள் மற்றும் இலக்கியப் படைப்புகள்.`,authorUrl,'ProfilePage',authorName);
 
   const allPosts = getStoredPosts();
   const authorPosts = allPosts.filter(p => p.author === authorName);
