@@ -1,5 +1,5 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://pavizhithazh.com/sitemap.xml
+Sitemap: https://www.pavizhithazh.com/sitemap.xml
 Sitemap: https://www.pavizhithazh.com/feed.xml
