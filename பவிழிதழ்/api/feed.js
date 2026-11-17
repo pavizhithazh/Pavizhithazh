@@ -1,5 +1,5 @@
 const SUPABASE_URL = 'https://guuowevezqqscpppehcr.supabase.co';
-const SUPABASE_PUBLIC_KEY = 'sb_publishable_HonZEhmBJBT5N34Ub3XAIg_UWZPKGk';
+const SUPABASE_PUBLIC_KEY = 'sb_publishable_HonZEhmBJBT5N34Ub3XAIg_UWZPKGkD';
 const SITE_URL = 'https://www.pavizhithazh.com';
 
 function xmlEscape(value) {
