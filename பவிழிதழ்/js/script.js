@@ -15,7 +15,7 @@ const PaviDB = (() => {
   const isPublicReleaseDate=value=>{const date=String(value||'').trim().slice(0,10);if(!/^\d{4}-\d{2}-\d{2}$/.test(date))return false;return date<=indiaToday();};
   async function refreshAdminPosts() {
     const db=client(); if(!db) throw new Error('Supabase client load ஆகவில்லை. இணைய இணைப்பைச் சரிபார்க்கவும்.');
-    const {data:posts,error}=await db.from('posts').select('*').eq('published',true).order('created_at',{ascending:false});
+    const {data:posts,error}=await db.from('posts').select('*').order('created_at',{ascending:false});
     fail(error);
     const mapped=(posts||[]).map(mapPost);
     localStorage.setItem('pavizhidhal_posts',JSON.stringify(mapped));
