@@ -12,20 +12,6 @@ const PaviDB = (() => {
   }
   const indiaToday=()=>{const parts=new Intl.DateTimeFormat('en-GB',{timeZone:'Asia/Kolkata',year:'numeric',month:'2-digit',day:'2-digit'}).formatToParts(new Date());const part=type=>parts.find(item=>item.type===type)?.value||'';return `${part('year')}-${part('month')}-${part('day')}`;};
   const isPublicReleaseDate=value=>{const date=String(value||'').trim().slice(0,10);if(!/^\d{4}-\d{2}-\d{2}$/.test(date))return false;return date<=indiaToday();};
-  async function scheduleExistingPostsForNov25(){
-    const db=client(); if(!db) throw new Error('Supabase client load ஆகவில்லை.');
-    const key='legacy_posts_release_migration_20261116';
-    const {data:existing,error:readError}=await db.from('site_settings').select('setting_value').eq('setting_key',key).maybeSingle();
-    fail(readError);
-    if(existing?.setting_value?.postIds) return existing.setting_value.postIds.length;
-    const {data:posts,error}=await db.from('posts').select('id').eq('published',true);
-    fail(error);
-    const settingValue={releaseDate:'2026-11-25',postIds:(posts||[]).map(p=>String(p.id))};
-    const {error:saveError}=await db.from('site_settings').upsert({setting_key:key,setting_value:settingValue,updated_at:new Date().toISOString()},{onConflict:'setting_key'});
-    fail(saveError);
-    await refreshAdminPosts();
-    return settingValue.postIds.length;
-  }
   async function refreshAdminPosts() {
     const db=client(); if(!db) throw new Error('Supabase client load ஆகவில்லை. இணைய இணைப்பைச் சரிபார்க்கவும்.');
     const {data:posts,error}=await db.from('posts').select('*').eq('published',true).order('created_at',{ascending:false});
@@ -34,17 +20,9 @@ const PaviDB = (() => {
     localStorage.setItem('pavizhidhal_posts',JSON.stringify(mapped));
     return mapped;
   }
+  // All records marked published in Supabase are public immediately; no Nov 25 date gate.
   async function refreshPosts() {
-    const posts=await refreshAdminPosts();
-    const db=client();
-    const {data:gate,error}=await db.from('site_settings').select('setting_value').eq('setting_key','legacy_posts_release_migration_20261116').maybeSingle();
-    fail(error);
-    const legacy=gate?.setting_value||{};
-    const legacyIds=new Set(Array.isArray(legacy.postIds)?legacy.postIds.map(String):[]);
-    const legacyReleased=legacy.releaseDate?legacy.releaseDate<=indiaToday():true;
-    const visible=posts.filter(post=>legacyIds.has(String(post.id))?!legacyReleased?false:true:isPublicReleaseDate(post.date));
-    localStorage.setItem('pavizhidhal_posts',JSON.stringify(visible));
-    return visible;
+    return await refreshAdminPosts();
   }
   async function init() {
     const db=client(); if(!db) throw new Error('Supabase client load ஆகவில்லை. இணைய இணைப்பைச் சரிபார்க்கவும்.');
@@ -135,7 +113,7 @@ const PaviDB = (() => {
   async function login(email,password){const {data,error}=await client().auth.signInWithPassword({email,password});fail(error);const {data:allowed,error:ae}=await client().rpc('pavizhidhal_is_admin');if(ae || allowed!==true){await client().auth.signOut();throw new Error('இந்தக் கணக்கிற்கு Admin அனுமதி இல்லை. admin_users அட்டவணையில் user_id சேர்க்கப்பட்டுள்ளதா பார்க்கவும்.');}return data;}
   async function logout(){const {error}=await client().auth.signOut();fail(error);}
   async function isAdmin(){const {data:{session}}=await client().auth.getSession();if(!session)return false;const {data,error}=await client().rpc('pavizhidhal_is_admin');return !error && data===true;}
-  return {init,refreshPosts,refreshAdminPosts,scheduleExistingPostsForNov25,today:indiaToday,loadComments,savePosts,deletePost,addComment,deleteComment,approveComment,saveSetting,getWebsiteUpdatedDate,saveWebsiteUpdatedDate,upload,uploadCertificateFile,removeCertificateFile,certificatePublicUrl,listCertificateFiles,createCertificateFileRecord,setCertificatePublished,deleteCertificateFileRecord,login,logout,isAdmin};
+  return {init,refreshPosts,refreshAdminPosts,today:indiaToday,loadComments,savePosts,deletePost,addComment,deleteComment,approveComment,saveSetting,getWebsiteUpdatedDate,saveWebsiteUpdatedDate,upload,uploadCertificateFile,removeCertificateFile,certificatePublicUrl,listCertificateFiles,createCertificateFileRecord,setCertificatePublished,deleteCertificateFileRecord,login,logout,isAdmin};
 })();
 
 async function persistPaviSetting(localKey, value) {
@@ -214,6 +192,23 @@ function initPavizhidhalTheme(){
     btn.addEventListener('click',()=>{const next=document.documentElement.dataset.theme==='dark'?'light':'dark';document.documentElement.dataset.theme=next;localStorage.setItem('pavizhidhal_theme',next);btn.textContent=next==='dark'?'☀ ஒளி நிறம்':'☾ இருள் நிறம்';});
   }
 }
+function injectRssLink(){
+  const feedUrl='https://www.pavizhithazh.com/feed.xml';
+  if(!document.querySelector('link[rel="alternate"][type="application/rss+xml"]')){
+    const alternate=document.createElement('link');
+    alternate.rel='alternate';alternate.type='application/rss+xml';
+    alternate.title='பவிழிதழ் – புதிய படைப்புகள்';alternate.href=feedUrl;
+    document.head.appendChild(alternate);
+  }
+  const footer=document.querySelector('footer');
+  if(!footer||footer.querySelector('.paviz-rss-link'))return;
+  const links=footer.querySelector('.footer-links')||footer;
+  const link=document.createElement('a');
+  link.className='paviz-rss-link';link.href='/feed.xml';
+  link.textContent='◔ RSS Feed';link.setAttribute('aria-label','பவிழிதழ் RSS Feed');
+  links.appendChild(link);
+}
+
 document.addEventListener('DOMContentLoaded', async () => {
   try { await PaviDB.init(); } catch (e) { console.error(e); }
   initVintagePageExperience();
@@ -229,7 +224,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   if(contactForm) contactForm.addEventListener('submit',e=>{e.preventDefault();const fd=new FormData(contactForm);const subject=`பவிழிதழ் தொடர்பு – ${fd.get('reason')||'பொதுத் தொடர்பு'}`;const body=`பெயர்: ${fd.get('name')}\nதொலைபேசி: ${fd.get('phone')||'குறிப்பிடப்படவில்லை'}\nமின்னஞ்சல்: ${fd.get('email')}\nவகை: ${fd.get('reason')}\n\nசெய்தி:\n${fd.get('message')}`;location.href=`mailto:pavizhithazh@gmail.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;});
   applySavedSiteSettings();
   renderIssueDownloadLink();
-  if (pageCategory !== 'admin') { injectSubmissionNotice(); upgradePublicFooter(); initVisitorStats(); }
+  if (pageCategory !== 'admin') { injectSubmissionNotice(); upgradePublicFooter(); injectRssLink(); initVisitorStats(); }
   if (pageCategory === 'admin') {
     initAdminPanel();
   } else if (pageCategory === 'read') {
@@ -1039,7 +1034,6 @@ async function initAdminPanel(){
     try{
       await PaviDB.login(overlay.querySelector('#adminLoginEmail').value.trim(),overlay.querySelector('#adminLoginPassword').value);
       await PaviDB.loadComments();
-      await PaviDB.scheduleExistingPostsForNov25();
       sessionStorage.setItem('pavizhidhal_admin_logged','true');
       overlay.remove();document.body.classList.remove('admin-auth-open');
       await initAdminDashboard();
