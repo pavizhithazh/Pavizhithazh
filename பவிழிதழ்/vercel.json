@@ -1,6 +1,10 @@
 {
   "rewrites": [
     {
+      "source": "/read.html",
+      "destination": "/api/read"
+    },
+    {
       "source": "/feed.xml",
       "destination": "/api/feed"
     },
