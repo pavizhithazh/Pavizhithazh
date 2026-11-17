@@ -484,13 +484,24 @@ function loadCategoryPosts(category) {
   });
 }
 
+function applyPaviSeo(title,description,url,type,author){
+ document.title=title;
+ const meta=(key,value,property)=>{let el=document.head.querySelector('meta['+(property?'property':'name')+'="'+key+'"]');if(!el){el=document.createElement('meta');el.setAttribute(property?'property':'name',key);document.head.appendChild(el);}el.content=value;};
+ meta('description',description.slice(0,300),false);meta('og:title',title,true);meta('og:description',description.slice(0,300),true);meta('og:type',type==='CreativeWork'?'article':'profile',true);meta('og:url',url,true);
+ let canonical=document.head.querySelector('link[rel="canonical"]');if(!canonical){canonical=document.createElement('link');canonical.rel='canonical';document.head.appendChild(canonical);}canonical.href=url;
+ let ld=document.getElementById('pavizhithazh-seo-jsonld');if(!ld){ld=document.createElement('script');ld.id='pavizhithazh-seo-jsonld';ld.type='application/ld+json';document.head.appendChild(ld);}
+ ld.textContent=JSON.stringify({'@context':'https://schema.org','@type':type,'headline':title,'name':title,'description':description.slice(0,300),'url':url,'inLanguage':'ta','publisher':{'@type':'Organization','name':'பவிழிதழ்','url':'https://www.pavizhithazh.com/'},...(author?{'author':{'@type':'Person','name':author}}:{})});
+}
+
 function renderReadPage(){
   const container=document.getElementById('readingContainer');
   if(!container)return;
   const id=new URLSearchParams(location.search).get('id');
   const post=getStoredPosts().find(p=>String(p.id)===String(id));
   if(!post){container.innerHTML='<div class="coming-soon-box"><h2>இந்தப் படைப்பைக் கண்டறிய முடியவில்லை.</h2><p>முகப்புப் பக்கத்திற்குச் சென்று மீண்டும் தேர்ந்தெடுக்கவும்.</p><a class="issue-read-link" href="index.html">முகப்பிற்குத் திரும்பு</a></div>';return;}
-  document.title=`${post.title} – பவிழிதழ்`;
+  const workUrl='https://www.pavizhithazh.com/read.html?id='+encodeURIComponent(String(post.id));
+  const workDescription=String(post.content||'').replace(/\s+/g,' ').trim().slice(0,280)||('பவிழிதழில் வெளியான '+getCategoryName(post.category));
+  applyPaviSeo(`${post.title||'இலக்கியப் படைப்பு'} – ${post.author||'பவிழிதழ்'} | பவிழிதழ்`,workDescription,workUrl,'CreativeWork',post.author||'');
   const theme=categoryTheme(post.category);
   const image=post.image?`<img class="reading-illustration" src="${escapeHTML(post.image)}" alt="${escapeHTML(post.title)}">`:'';
   const isChildren=post.category==='kulandhai';
