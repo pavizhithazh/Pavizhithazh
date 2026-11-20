@@ -764,3 +764,16 @@ header{position:relative}
 .archive-issue-details dd{margin:0;font-weight:600;overflow-wrap:anywhere}
 .archive-issue-actions{display:flex;flex-wrap:wrap;align-items:center;gap:10px;margin-top:14px}
 @media(max-width:560px){.archive-issue-details{grid-template-columns:1fr 1fr;gap:8px}.archive-issue-details dt{font-size:.72rem}}
+
+
+/* Public bilingual controls and work search */
+.pavi-public-tools{max-width:1180px;margin:12px auto;padding:12px 16px;border:1px solid rgba(128,95,55,.22);border-radius:12px;background:rgba(250,246,237,.92);display:grid;gap:10px}
+.pavi-language-row{display:flex;align-items:center;justify-content:flex-end;gap:10px}
+.pavi-tools-label,.pavi-search-status{font-size:.88rem;color:#70583e}
+.pavi-language-row button,.pavi-search-form button{border:1px solid #8d6940;border-radius:8px;padding:9px 14px;background:#76512f;color:#fff;font:inherit;cursor:pointer}
+.pavi-search-form{display:grid;grid-template-columns:minmax(0,1fr) auto auto;gap:8px}
+.pavi-search-form input{width:100%;min-width:0;padding:11px 13px;border:1px solid #cbb99f;border-radius:8px;background:#fff;font:inherit}
+.pavi-search-form button:last-child{background:transparent;color:#76512f}
+.pavi-search-status{margin:0;text-align:center}
+.pavi-public-tools button:focus-visible,.pavi-search-form input:focus-visible{outline:3px solid #c49a5a;outline-offset:2px}
+@media(max-width:600px){.pavi-public-tools{margin:9px;padding:10px}.pavi-search-form{grid-template-columns:1fr 1fr}.pavi-search-form input{grid-column:1/-1}.pavi-search-form button{padding:9px 7px}.pavi-language-row{justify-content:space-between}}
