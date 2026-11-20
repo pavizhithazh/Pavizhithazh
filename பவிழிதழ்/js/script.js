@@ -381,7 +381,7 @@ function openGeneratedPublicCertificate(cert){
   const number=String(cert.certificateNo||cert.certificate_no||'').trim();
   const issued=String(cert.issueDate||cert.issued_on||'');
   const date=issued?new Date(issued+'T00:00:00').toLocaleDateString('ta-IN'):'';
-  const categoryNames={kavithai:'கவிதை',kathai:'சிறுகதை',katturai:'கட்டுரை',aaivukatturai:'ஆய்வுக் கட்டுரை',kulandhai:'குழந்தை இலக்கியம்'};
+  const categoryNames={kavithai:'கவிதை',kathai:'சிறுகதை',katturai:'கட்டுரை',aaivukatturai:'இலக்கிய விமர்சனம்',kulandhai:'குழந்தை இலக்கியம்'};
   const defaults={
     participation:`பவிழிதழ் நடத்திய ${event||'இலக்கிய நிகழ்ச்சி'}யில் ஆர்வத்துடன் பங்கேற்று, தங்களது திறமையையும் படைப்பாற்றலையும் வெளிப்படுத்திய ${name} அவர்களுக்கு இச்சான்றிதழ் மகிழ்ச்சியுடன் வழங்கப்படுகிறது.`,
     selection:`பவிழிதழ் நடத்திய ${event||'இலக்கியத் தேர்வில்'} தங்களது படைப்பு தேர்வு செய்யப்பட்ட ${name} அவர்களுக்கு இலக்கியப் பங்களிப்பைப் பாராட்டி இச்சான்றிதழ் அன்புடன் வழங்கப்படுகிறது.`,
@@ -426,7 +426,7 @@ function categoryTheme(category){
   return ({kavithai:'theme-kavithai',kathai:'theme-kathai',katturai:'theme-katturai',aaivukatturai:'theme-aaivukatturai',kulandhai:'theme-kulandhai'})[category]||'theme-kavithai';
 }
 function getCategoryName(category){
-  return ({kavithai:'கவிதை',kathai:'சிறுகதை',katturai:'கட்டுரை',aaivukatturai:'ஆய்வுக் கட்டுரை',kulandhai:'குழந்தை இலக்கியம்'})[category]||'இலக்கியப் படைப்பு';
+  return ({kavithai:'கவிதை',kathai:'சிறுகதை',katturai:'கட்டுரை',aaivukatturai:'இலக்கிய விமர்சனம்',kulandhai:'குழந்தை இலக்கியம்'})[category]||'இலக்கியப் படைப்பு';
 }
 function readLink(post){return `read.html?id=${encodeURIComponent(post.id)}`;}
 function loadCategoryPosts(category) {
@@ -735,7 +735,7 @@ function renderHomepageEditorial() {
 
   const categoryNames = {
     kavithai: 'கவிதை', kathai: 'சிறுகதை', katturai: 'கட்டுரை',
-    aaivukatturai: 'ஆய்வுக் கட்டுரை', kulandhai: 'குழந்தை இலக்கியம்'
+    aaivukatturai: 'இலக்கிய விமர்சனம்', kulandhai: 'குழந்தை இலக்கியம்'
   };
   const categoryLinks = {
     kavithai: 'kavithai.html', kathai: 'kathai.html', katturai: 'katturai.html',
@@ -936,7 +936,7 @@ function renderAdminCollection(listId,rows,kind,editFn,deleteFn,publishFn){
 }
 function printCertificate(cert){
  const types={selection:'தேர்வு / தேர்ந்தெடுக்கப்பட்ட படைப்புகளுக்கான சான்றிதழ்',selected_work:'தேர்வு / தேர்ந்தெடுக்கப்பட்ட படைப்புகளுக்கான சான்றிதழ்',participation:'பங்கேற்புச் சான்றிதழ்',special:'சிறப்புநிலைச் சான்றிதழ்',winner:'வெற்றியாளர் சான்றிதழ்'};
- const categories={kavithai:'கவிதை',kathai:'சிறுகதை',katturai:'கட்டுரை',aaivukatturai:'ஆய்வுக் கட்டுரை',kulandhai:'குழந்தை இலக்கியம்'};
+ const categories={kavithai:'கவிதை',kathai:'சிறுகதை',katturai:'கட்டுரை',aaivukatturai:'இலக்கிய விமர்சனம்',kulandhai:'குழந்தை இலக்கியம்'};
  const date=cert.issueDate?new Intl.DateTimeFormat('ta-IN',{day:'numeric',month:'long',year:'numeric'}).format(new Date(`${cert.issueDate}T00:00:00`)):'';
  const brand=safeParseJSON(localStorage.getItem('pavizhidhal_certificate_branding'),{})||{};
  const founderImage=brand.founderImage||brand.sign1Image||'';
@@ -1089,7 +1089,7 @@ async function initAdminDashboard(){
   });
   ['siteTitle','kural','notice','founder','footer'].forEach(k=>setValue('setting'+k[0].toUpperCase()+k.slice(1),site[k]||''));setValue('settingEmail','pavizhithazh@gmail.com');setValue('settingIssnNumber',site.issnNumber||'');setValue('settingUdyamNumber',site.udyamNumber||'');
   setValue('settingPrimaryColor',site.primaryColor||'#5c0601');setValue('settingGoldColor',site.goldColor||'#b8860b');
-  const pageDefaults={home:['பவிழிதழ் – காலாண்டு இலக்கிய இல்லம்','மூன்று மாதங்களுக்கு ஒருமுறை, மரபின் வேரும் புதுமையின் சிறகும் இணையும் தமிழ் படைப்புகள் உங்கள் வாசிப்பிற்கு மலர்கின்றன.'],kavithai:['கவிதைகள்','பழம்பெரும் கவிதை ஏட்டின் வாசிப்பு நயத்தில் கவிதைகளை வாசியுங்கள்.'],kathai:['சிறுகதைகள்','பழங்காலக் கதை ஏட்டின் உணர்வில் சிறுகதைகளை வாசியுங்கள்.'],katturai:['கட்டுரைகள்','பழமையான ஏட்டுத் தாள் வடிவில் சிந்தனைக் கட்டுரைகள்.'],aaivukatturai:['ஆய்வுக் கட்டுரைகள்','செப்பேட்டு ஆவண நயத்தில் ஆய்வுப் படைப்புகள்.'],kulandhai:['குழந்தை இலக்கியம்','வண்ணமயமான ஏட்டில் குழந்தைகளுக்கான படைப்புகள்.'],authors_list:['எழுத்தாளர்கள்','பவிழிதழில் எழுதும் படைப்பாளர்களை அறிந்துகொள்ளுங்கள்.'],about:['எங்களைப் பற்றி','பவிழிதழின் நோக்கம், காலாண்டு வெளியீடுகள், விருதுகள் மற்றும் தொடர்பு விவரங்கள்.']};
+  const pageDefaults={home:['பவிழிதழ் – காலாண்டு இலக்கிய இல்லம்','மூன்று மாதங்களுக்கு ஒருமுறை, மரபின் வேரும் புதுமையின் சிறகும் இணையும் தமிழ் படைப்புகள் உங்கள் வாசிப்பிற்கு மலர்கின்றன.'],kavithai:['கவிதைகள்','பழம்பெரும் கவிதை ஏட்டின் வாசிப்பு நயத்தில் கவிதைகளை வாசியுங்கள்.'],kathai:['சிறுகதைகள்','பழங்காலக் கதை ஏட்டின் உணர்வில் சிறுகதைகளை வாசியுங்கள்.'],katturai:['கட்டுரைகள்','பழமையான ஏட்டுத் தாள் வடிவில் சிந்தனைக் கட்டுரைகள்.'],aaivukatturai:['இலக்கிய விமர்சனம்','செப்பேட்டு ஆவண நயத்தில் ஆய்வுப் படைப்புகள்.'],kulandhai:['குழந்தை இலக்கியம்','வண்ணமயமான ஏட்டில் குழந்தைகளுக்கான படைப்புகள்.'],authors_list:['எழுத்தாளர்கள்','பவிழிதழில் எழுதும் படைப்பாளர்களை அறிந்துகொள்ளுங்கள்.'],about:['எங்களைப் பற்றி','பவிழிதழின் நோக்கம், காலாண்டு வெளியீடுகள், விருதுகள் மற்றும் தொடர்பு விவரங்கள்.']};
   const loadPageEditor=()=>{const key=$('editPage').value,cfg=(site.pages||{})[key]||{},d=pageDefaults[key];setValue('editPageTitle',cfg.title||d[0]);setValue('editPageIntro',cfg.intro||d[1]);};
   $('editPage').addEventListener('change',loadPageEditor);loadPageEditor();
   $('siteSettingsForm').addEventListener('submit',async e=>{e.preventDefault();try{const logoFile=$('settingLogoFile').files[0],issnLogoFile=$('settingIssnLogoFile').files[0],udyamLogoFile=$('settingUdyamLogoFile').files[0];const logo=logoFile?await adminReadFile(logoFile):(site.logo||'');const issnLogo=issnLogoFile?await adminReadFile(issnLogoFile):(site.issnLogo||'');const udyamLogo=udyamLogoFile?await adminReadFile(udyamLogoFile):(site.udyamLogo||'');let issnNumber=$('settingIssnNumber').value.trim(),udyamNumber=$('settingUdyamNumber').value.trim();if(issnNumber&&!/^\d{4}-?\d{3}[\dXx]$/.test(issnNumber))throw new Error('ISSN எண்ணை 0000-0000 என்ற வடிவில் உள்ளிடவும்.');if(issnNumber){issnNumber=issnNumber.replace(/-/g,'').toUpperCase();issnNumber=issnNumber.slice(0,4)+'-'+issnNumber.slice(4);}if(udyamNumber&&!/^UDYAM-[A-Z]{2}-\d{2}-\d{7}$/i.test(udyamNumber))throw new Error('Udyam எண்ணை UDYAM-XX-00-0000000 என்ற வடிவில் உள்ளிடவும்.');const data={...getSiteSettings(),issnLogo,udyamLogo,issnNumber,udyamNumber,siteTitle:$('settingSiteTitle').value.trim(),kural:$('settingKural').value.trim(),notice:$('settingNotice').value.trim(),founder:$('settingFounder').value.trim(),email:$('settingEmail').value.trim(),footer:$('settingFooter').value.trim(),primaryColor:$('settingPrimaryColor').value,goldColor:$('settingGoldColor').value,logo,pages:getSiteSettings().pages||{}};await persistPaviSetting('pavizhidhal_site_settings',data);if(logo)localStorage.setItem('pavizhidhal_custom_logo',logo);alert('பொது தள அமைப்புகள் Supabase-ல் சேமிக்கப்பட்டன.');}catch(err){alert('சேமிக்க முடியவில்லை: '+(err.message||err));}});
@@ -1282,7 +1282,7 @@ async function initAdminDashboard(){
   let certificates=getSettingCollection('pavizhidhal_certificates'),editingCertificateId='';
   const certificateForm=$('certificateForm');
   const certificateTypeNames={selection:'தேர்வு / தேர்ந்தெடுக்கப்பட்ட படைப்புகளுக்கான சான்றிதழ்',selected_work:'தேர்வு / தேர்ந்தெடுக்கப்பட்ட படைப்புகளுக்கான சான்றிதழ்',participation:'பங்கேற்புச் சான்றிதழ்',special:'சிறப்புநிலைச் சான்றிதழ்',winner:'வெற்றியாளர் சான்றிதழ்'};
-  const certificateCategoryNames={kavithai:'கவிதை',kathai:'சிறுகதை',katturai:'கட்டுரை',aaivukatturai:'ஆய்வுக் கட்டுரை',kulandhai:'குழந்தை இலக்கியம்'};
+  const certificateCategoryNames={kavithai:'கவிதை',kathai:'சிறுகதை',katturai:'கட்டுரை',aaivukatturai:'இலக்கிய விமர்சனம்',kulandhai:'குழந்தை இலக்கியம்'};
   const renderCertificates=()=>renderAdminCollection('certificatesList',certificates.map(x=>({...x,type:x.type==='selected_work'?'selection':x.type,title:x.recipient,summary:`${certificateTypeNames[x.type]||'சான்றிதழ்'} · ${x.eventName} · ${x.certificateNo}`})),'certificate',row=>{editingCertificateId=row.id;setValue('certificateType',row.type==='selected_work'?'selection':row.type);setValue('certificateNumber',row.certificateNo||'');setValue('certificateRecipient',row.recipient);setValue('certificateEvent',row.eventName);setValue('certificateWorkTitle',row.workTitle);setValue('certificateCategory',row.category);setValue('certificateYear',row.year);setValue('certificateRank',row.rank);setValue('certificateDate',row.issueDate);setValue('certificateMessage',row.message);$('certificateFounderIsJudge').checked=!!row.founderIsJudge;$('certificateIncludeCoordinator').checked=!!row.includeCoordinator;$('certificateIncludePartner').checked=!!row.includePartner;$('certificateSaveBtn').textContent='மாற்றங்களைச் சேமி';$('certificateCancelBtn').hidden=false;$('certificateManager').scrollIntoView({behavior:'smooth'});},async id=>{if(!confirm('இந்தச் சான்றிதழ் பதிவை நீக்கவா?'))return;try{certificates=certificates.filter(x=>x.id!==id);await persistCollection('pavizhidhal_certificates',certificates);renderCertificates();updateAdminStats();}catch(e){alert('நீக்க முடியவில்லை: '+(e.message||e));}});
   const certificateBodyDefaults={
     selection:'பவிழிதழ் நடத்திய தமிழ் இலக்கியத் தேர்வு / படைப்புத் தேர்வில் பங்கேற்று, தங்களது திறமையையும் படைப்பாற்றலையும் வெளிப்படுத்தி சிறப்பான சாதனை படைத்த [பெறுபவர் பெயர்] அவர்களுக்கு இச்சான்றிதழ் அன்புடன் வழங்கப்படுகிறது.',
