@@ -82,7 +82,7 @@ const settings=read('pavizhidhal_site_settings',{}),reg=document.getElementById(
 if(settings.issnNumber||settings.udyamNumber||settings.issnLogo||settings.udyamLogo){
  reg.innerHTML=`${settings.issnLogo?`<img src="${safe(settings.issnLogo)}" alt="ISSN">`:''}${settings.issnNumber?`<span>ISSN: ${safe(settings.issnNumber)}</span>`:''}${settings.udyamLogo?`<img src="${safe(settings.udyamLogo)}" alt="Udyam">`:''}${settings.udyamNumber?`<span>Udyam / MSME: ${safe(settings.udyamNumber)}</span>`:''}`;
 }
-const categories={kavithai:'கவிதை',kathai:'சிறுகதை',katturai:'கட்டுரை',aaivukatturai:'ஆய்வுக் கட்டுரை',kulandhai:'குழந்தை இலக்கியம்'};
+const categories={kavithai:'கவிதை',kathai:'சிறுகதை',katturai:'கட்டுரை',aaivukatturai:'இலக்கிய விமர்சனம்',kulandhai:'குழந்தை இலக்கியம்'};
 function renderAd(ad){if(!ad||!ad.enabled)return null;const section=document.createElement('section');section.className='ad-page '+(ad.size==='half'?'half':ad.size==='banner'?'banner':'full');section.setAttribute('aria-label','விளம்பரப் பக்கம்');if(ad.imageUrl){const img=document.createElement('img');img.src=ad.imageUrl;img.alt='விளம்பரம்';section.appendChild(img);}else{const label=document.createElement('div');label.className='ad-placeholder';label.textContent='விளம்பர இடம்';section.appendChild(label);}return section;}
 function cover(el,url,label){
  if(url){const img=document.createElement('img');img.src=url;img.alt=label;el.appendChild(img);}
