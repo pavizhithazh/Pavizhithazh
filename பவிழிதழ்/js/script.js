@@ -219,6 +219,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   const pageCategory = document.body.getAttribute('data-category');
   if(pageCategory==='admin') window.addEventListener('pageshow',event=>{if(event.persisted)location.reload();});
   ensureSiteTagline(pageCategory);
+  initPaviBilingualAndSearch(pageCategory);
   injectSocialIconBar(pageCategory);
   loadSocialLinks();
   const contactForm=document.getElementById('contactForm');
@@ -434,7 +435,9 @@ function loadCategoryPosts(category) {
   const comingSoonBox = document.getElementById('comingSoonBox');
   if (!container) return;
   const allPosts = getStoredPosts();
-  const filteredPosts = category === 'home' ? allPosts : allPosts.filter(post => post.category === category);
+  const searchTerm = String(window.paviWorkSearchTerm || '').trim().toLocaleLowerCase();
+  const categoryPosts = category === 'home' ? allPosts : allPosts.filter(post => post.category === category);
+  const filteredPosts = searchTerm ? categoryPosts.filter(post => [post.title,post.author,post.category,post.content].some(value => String(value||'').toLocaleLowerCase().includes(searchTerm))) : categoryPosts;
   if (!filteredPosts.length) {
     if (comingSoonBox) comingSoonBox.style.display = 'block';
     container.innerHTML = '';
@@ -456,6 +459,50 @@ function loadCategoryPosts(category) {
       <a class="issue-read-link" href="${readLink(post)}">முழுப் படைப்பையும் வாசிக்க ↗</a>`;
     container.appendChild(article);
   });
+}
+
+
+/* Bilingual public interface (literary works remain in their original language) */
+const PAVI_UI_TRANSLATIONS = [
+ ['முகப்பு','Home'],['கவிதைகள்','Poems'],['சிறுகதைகள்','Short Stories'],['கட்டுரைகள்','Articles'],
+ ['ஆய்வுக் கட்டுரைகள்','Research Articles'],['குழந்தை இலக்கியம்','Children’s Literature'],['எழுத்தாளர்கள்','Authors'],
+ ['சான்றிதழ்கள்','Certificates'],['எங்களைப் பற்றி & தொடர்பு','About & Contact'],['எங்களைப் பற்றி','About Us'],
+ ['பொருளடக்கம்','Contents'],['மலரட்டும் தமிழ்','Let Tamil Flourish'],['இன்றைய விதை; நாளைய விருட்சம்…','Today’s Seed; Tomorrow’s Tree…'],
+ ['அறம் • பொருள் • இன்பம்','Virtue • Wealth • Love'],['மரபு • புதுமை • இளமை','Tradition • Innovation • Youth'],
+ ['தமிழ் இலக்கிய காலாண்டு இதழ்','Tamil Literary Quarterly'],['சிறந்த படைப்புகள்','Featured Works'],['வாசிக்கத் தேர்ந்தெடுக்கப்பட்டவை','Selected for Reading'],
+ ['புதிதாக மலர்ந்த படைப்புகள்','Newly Published Works'],['சமீபத்திய வரவுகள்','Latest Arrivals'],['வெளியான காலாண்டு இதழ்கள்','Published Quarterly Issues'],
+ ['இதழின் முழுப் பதிவுகள்','All Published Works'],['முழுப் படைப்பையும் வாசிக்க','Read Full Work'],['சொற்கள்','Words'],['வரிகள்','Lines'],
+ ['நிறுவனர் மற்றும் ஒருங்கிணைப்பாளர்:','Founder and Coordinator:'],['இணையதள இறுதிப் புதுப்பிப்பு:','Website Last Updated:'],
+ ['விதிமுறைகள்','Terms'],['தனியுரிமைக் கொள்கை','Privacy Policy'],['இதழ்கள்','Issues'],
+ ['வெற்றியாளர்கள் அரங்கம்','Winners’ Hall'],['இலக்கியப் போட்டிகள் & அறிவிப்புகள்','Literary Competitions & Announcements']
+];
+function paviTranslateText(value,language){
+ let output=String(value);
+ for(const [ta,en] of PAVI_UI_TRANSLATIONS){const from=language==='en'?ta:en,to=language==='en'?en:ta;output=output.split(from).join(to);}
+ return output;
+}
+function paviApplyLanguage(language){
+ const lang=language==='en'?'en':'ta';document.documentElement.lang=lang;
+ document.querySelectorAll('body *').forEach(el=>{
+  if(el.closest('#readingContainer,.reading-sheet,.post-preview-excerpt,.admin-body'))return;
+  el.childNodes.forEach(node=>{if(node.nodeType===Node.TEXT_NODE&&node.nodeValue.trim())node.nodeValue=paviTranslateText(node.nodeValue,lang);});
+  ['placeholder','aria-label','title'].forEach(attr=>{const v=el.getAttribute(attr);if(v)el.setAttribute(attr,paviTranslateText(v,lang));});
+ });
+ const btn=document.getElementById('paviLanguageToggle');if(btn)btn.textContent=lang==='en'?'தமிழ்':'English';
+ localStorage.setItem('pavizhidhal_language',lang);
+}
+function initPaviBilingualAndSearch(category){
+ if(category==='admin')return;
+ const header=document.querySelector('header');
+ if(header&&!document.getElementById('paviPublicTools')){
+  const tools=document.createElement('section');tools.id='paviPublicTools';tools.className='pavi-public-tools';
+  tools.innerHTML='<div class="pavi-language-row"><span class="pavi-tools-label">மொழி / Language</span><button type="button" id="paviLanguageToggle">English</button></div><form id="paviWorkSearchForm" class="pavi-search-form" role="search"><label class="sr-only" for="paviWorkSearch">படைப்புகளைத் தேடுக / Search works</label><input id="paviWorkSearch" type="search" placeholder="படைப்பின் தலைப்பு, எழுத்தாளர் அல்லது சொற்களைத் தேடுக / Search title, author or words" autocomplete="off"><button type="submit">தேடுக / Search</button><button type="button" id="paviClearSearch">அழிக்க / Clear</button></form><p id="paviSearchStatus" class="pavi-search-status" aria-live="polite"></p>';
+  header.insertAdjacentElement('afterend',tools);
+  document.getElementById('paviLanguageToggle').addEventListener('click',()=>paviApplyLanguage((localStorage.getItem('pavizhidhal_language')||'ta')==='ta'?'en':'ta'));
+  document.getElementById('paviWorkSearchForm').addEventListener('submit',event=>{event.preventDefault();window.paviWorkSearchTerm=document.getElementById('paviWorkSearch').value.trim();loadCategoryPosts(category);const n=getStoredPosts().filter(p=>(category==='home'||p.category===category)&&[p.title,p.author,p.category,p.content].some(v=>String(v||'').toLocaleLowerCase().includes(window.paviWorkSearchTerm.toLocaleLowerCase()))).length;document.getElementById('paviSearchStatus').textContent=n+' படைப்புகள் கிடைத்தன / '+n+' works found';document.getElementById('postsContainer')?.scrollIntoView({behavior:'smooth',block:'start'});});
+  document.getElementById('paviClearSearch').addEventListener('click',()=>{document.getElementById('paviWorkSearch').value='';window.paviWorkSearchTerm='';document.getElementById('paviSearchStatus').textContent='';loadCategoryPosts(category);});
+ }
+ paviApplyLanguage(localStorage.getItem('pavizhidhal_language')||'ta');
 }
 
 function applyPaviSeo(title,description,url,type,author,work){
