@@ -1361,16 +1361,3 @@ async function adminDeletePost(id) {
   try{await PaviDB.deletePost(id);const posts=getStoredPosts().filter(p=>String(p.id)!==String(id));localStorage.setItem('pavizhidhal_posts',JSON.stringify(posts));renderAdminPosts();alert('படைப்பு Supabase-லிருந்து நீக்கப்பட்டது.');}
   catch(e){alert('Database-ல் நீக்க முடியவில்லை: '+(e.message||e));}
 }
-
-
-/* Monetag In-Page Push: public pages only; keep admin and print views ad-free. */
-(function () {
-  const path = window.location.pathname || '';
-  if (/(^|\/)admin\.html$/i.test(path) || /(^|\/)issue-print\.html$/i.test(path)) return;
-  if (window.__pavizhithazhMonetag12325744Loaded) return;
-  window.__pavizhithazhMonetag12325744Loaded = true;
-  const script = document.createElement('script');
-  script.dataset.zone = '12325744';
-  script.src = 'https://nap5k.com/tag.min.js';
-  document.body.appendChild(script);
-})();
