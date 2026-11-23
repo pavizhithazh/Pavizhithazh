@@ -1362,58 +1362,116 @@ async function adminDeletePost(id) {
   catch(e){alert('Database-ல் நீக்க முடியவில்லை: '+(e.message||e));}
 }
 
-/* PAVIZHITHAZH_ADS_V2 */
-/* One non-intrusive Adsterra unit per public page. Never insert into article/poem text. */
+
+/* PAVIZHITHAZH_ADS_V3 */
+/* Contextual ad placements: only between independent content blocks, never inside a work. */
 (function () {
-  const pathname = (window.location.pathname || '').toLowerCase();
-  const page = pathname.split('/').pop() || 'index.html';
-  if (page === 'admin.html' || page === 'issue-print.html' || page === 'certificate-demo.html') return;
+  const page = (window.location.pathname || '').toLowerCase().split('/').pop() || 'index.html';
+  if (['admin.html', 'issue-print.html', 'certificate-demo.html'].includes(page)) return;
 
+  const mobile = window.matchMedia('(max-width: 767px)').matches;
   const units = {
-    banner728: { key: 'a6a25fd8eef5e354da8f7069f1435471', width: 728, height: 90 },
-    banner320: { key: '9a8ff4207cfc7c68c92f895473748c4c', width: 320, height: 50 },
-    banner468: { key: '4fe9b9d99785b9c3f05e41e17b00424b', width: 468, height: 60 },
-    rectangle: { key: 'c0ab99deb112065e167f14ec5fab4aff', width: 300, height: 250 }
+    small: { key: '9a8ff4207cfc7c68c92f895473748c4c', width: 320, height: 50 },
+    wide: { key: 'a6a25fd8eef5e354da8f7069f1435471', width: 728, height: 90 },
+    medium: { key: '4fe9b9d99785b9c3f05e41e17b00424b', width: 468, height: 60 },
+    box: { key: 'c0ab99deb112065e167f14ec5fab4aff', width: 300, height: 250 }
   };
+  const banner = mobile ? units.small : units.wide;
+  let queue = [];
+  let loading = false;
 
-  function mountAd() {
-    if (document.getElementById('pavizhithazh-adsterra')) return;
-    const main = document.querySelector('main');
-    const footer = document.querySelector('footer');
-    if (!main || !footer || !footer.parentNode) return;
-
-    const isReader = page === 'read.html';
-    const categoryPages = ['kavithai.html', 'kathai.html', 'katturai.html', 'aaivukatturai.html', 'kulandhai.html'];
-    const isCategory = categoryPages.includes(page);
-    const isMobile = window.matchMedia('(max-width: 767px)').matches;
-    const unit = isReader ? units.rectangle : (isCategory && !isMobile ? units.banner468 : (isMobile ? units.banner320 : units.banner728));
-
+  function enqueue(unit, beforeNode, parent) {
+    if (!unit || !parent || !beforeNode || !beforeNode.parentNode) return;
+    if (beforeNode.parentNode.querySelector(':scope > .pavizhithazh-adsterra-slot')) return;
     const slot = document.createElement('aside');
-    slot.id = 'pavizhithazh-adsterra';
     slot.className = 'pavizhithazh-adsterra-slot';
     slot.setAttribute('aria-label', 'விளம்பரம்');
+    slot.dataset.adsterraKey = unit.key;
     const frame = document.createElement('div');
     frame.className = 'pavizhithazh-adsterra-frame';
     slot.appendChild(frame);
-    footer.parentNode.insertBefore(slot, footer);
+    beforeNode.parentNode.insertBefore(slot, beforeNode);
+    queue.push({unit,frame});
+    loadNext();
+  }
 
-    window.atOptions = {
-      key: unit.key,
-      format: 'iframe',
-      height: unit.height,
-      width: unit.width,
-      params: {}
+  function loadNext() {
+    if (loading || !queue.length) return;
+    loading = true;
+    const {unit,frame} = queue.shift();
+    window.atOptions = {key:unit.key,format:'iframe',height:unit.height,width:unit.width,params:{}};
+    const script = document.createElement('script');
+    script.async = true;
+    script.src = 'https://bauval.org/22/' + unit.key;
+    script.onload = script.onerror = function () {
+      loading = false;
+      loadNext();
     };
-    const loader = document.createElement('script');
-    loader.async = true;
-    loader.src = 'https://bauval.org/22/' + unit.key;
-    frame.appendChild(loader);
+    frame.appendChild(script);
   }
 
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', mountAd, { once: true });
-  } else {
-    mountAd();
+  function placeBetweenCards(container) {
+    if (!container || container.dataset.adsPlaced === 'yes') return;
+    const cards = Array.from(container.children).filter(el => el.matches('article.post-preview-card, article.post-card, .post-card'));
+    if (cards.length < 4) return;
+    container.dataset.adsPlaced = 'yes';
+    const points = [];
+    for (let n=4; n<cards.length; n+=4) points.push(cards[n]);
+    points.reverse().forEach((node,idx)=>enqueue(banner,node,container));
   }
+
+  function placeContentAds() {
+    const main = document.querySelector('main');
+    const footer = document.querySelector('footer');
+    if (!main || !footer) return;
+
+    const posts = document.getElementById('postsContainer');
+    if (posts) placeBetweenCards(posts);
+
+    if (page === 'read.html') {
+      // The entire poem/story remains untouched; ad appears only after the reading sheet.
+      const reading = document.getElementById('readingContainer');
+      if (reading && reading.children.length && !document.getElementById('pavizhithazh-reading-ad')) {
+        const slot = document.createElement('aside');
+        slot.id = 'pavizhithazh-reading-ad';
+        slot.className = 'pavizhithazh-adsterra-slot';
+        slot.setAttribute('aria-label','விளம்பரம்');
+        const frame = document.createElement('div');
+        frame.className = 'pavizhithazh-adsterra-frame';
+        slot.appendChild(frame);
+        main.appendChild(slot);
+        queue.push({unit:units.box,frame});
+        loadNext();
+      }
+      return;
+    }
+
+    // Static editorial pages: place ads only between complete top-level sections/cards.
+    if (posts) return;
+    if (main.dataset.contentAdsPlaced === 'yes') return;
+    const blocks = Array.from(main.children).filter(el =>
+      !el.matches('h1,h2,h3,.page-heading') &&
+      !el.classList.contains('pavizhithazh-adsterra-slot')
+    );
+    if (blocks.length < 3) return;
+    main.dataset.contentAdsPlaced = 'yes';
+    const firstPoint = blocks[Math.min(2, blocks.length-1)];
+    enqueue(mobile ? units.small : units.medium, firstPoint, main);
+    if (blocks.length >= 7) {
+      const secondPoint = blocks[Math.min(6, blocks.length-1)];
+      if (secondPoint !== firstPoint) enqueue(mobile ? units.small : units.wide, secondPoint, main);
+    }
+  }
+
+  function start() {
+    placeContentAds();
+    const posts = document.getElementById('postsContainer');
+    const reading = document.getElementById('readingContainer');
+    [posts,reading].filter(Boolean).forEach(target => {
+      new MutationObserver(() => placeContentAds()).observe(target,{childList:true,subtree:false});
+    });
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded',start,{once:true});
+  else start();
 })();
 
