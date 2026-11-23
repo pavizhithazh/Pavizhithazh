@@ -1361,3 +1361,59 @@ async function adminDeletePost(id) {
   try{await PaviDB.deletePost(id);const posts=getStoredPosts().filter(p=>String(p.id)!==String(id));localStorage.setItem('pavizhidhal_posts',JSON.stringify(posts));renderAdminPosts();alert('படைப்பு Supabase-லிருந்து நீக்கப்பட்டது.');}
   catch(e){alert('Database-ல் நீக்க முடியவில்லை: '+(e.message||e));}
 }
+
+/* PAVIZHITHAZH_ADS_V2 */
+/* One non-intrusive Adsterra unit per public page. Never insert into article/poem text. */
+(function () {
+  const pathname = (window.location.pathname || '').toLowerCase();
+  const page = pathname.split('/').pop() || 'index.html';
+  if (page === 'admin.html' || page === 'issue-print.html' || page === 'certificate-demo.html') return;
+
+  const units = {
+    banner728: { key: 'a6a25fd8eef5e354da8f7069f1435471', width: 728, height: 90 },
+    banner320: { key: '9a8ff4207cfc7c68c92f895473748c4c', width: 320, height: 50 },
+    banner468: { key: '4fe9b9d99785b9c3f05e41e17b00424b', width: 468, height: 60 },
+    rectangle: { key: 'c0ab99deb112065e167f14ec5fab4aff', width: 300, height: 250 }
+  };
+
+  function mountAd() {
+    if (document.getElementById('pavizhithazh-adsterra')) return;
+    const main = document.querySelector('main');
+    const footer = document.querySelector('footer');
+    if (!main || !footer || !footer.parentNode) return;
+
+    const isReader = page === 'read.html';
+    const categoryPages = ['kavithai.html', 'kathai.html', 'katturai.html', 'aaivukatturai.html', 'kulandhai.html'];
+    const isCategory = categoryPages.includes(page);
+    const isMobile = window.matchMedia('(max-width: 767px)').matches;
+    const unit = isReader ? units.rectangle : (isCategory && !isMobile ? units.banner468 : (isMobile ? units.banner320 : units.banner728));
+
+    const slot = document.createElement('aside');
+    slot.id = 'pavizhithazh-adsterra';
+    slot.className = 'pavizhithazh-adsterra-slot';
+    slot.setAttribute('aria-label', 'விளம்பரம்');
+    const frame = document.createElement('div');
+    frame.className = 'pavizhithazh-adsterra-frame';
+    slot.appendChild(frame);
+    footer.parentNode.insertBefore(slot, footer);
+
+    window.atOptions = {
+      key: unit.key,
+      format: 'iframe',
+      height: unit.height,
+      width: unit.width,
+      params: {}
+    };
+    const loader = document.createElement('script');
+    loader.async = true;
+    loader.src = 'https://bauval.org/22/' + unit.key;
+    frame.appendChild(loader);
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', mountAd, { once: true });
+  } else {
+    mountAd();
+  }
+})();
+
