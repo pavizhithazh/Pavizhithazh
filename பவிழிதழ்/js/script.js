@@ -1387,7 +1387,7 @@ function openPoemPageExport(post){
       await new Promise((resolve,reject)=>{img.onload=resolve;img.onerror=()=>reject(new Error('படத்தை உருவாக்க முடியவில்லை.'));img.src=url;});
       const canvas=document.createElement('canvas');canvas.width=width;canvas.height=height;canvas.getContext('2d').drawImage(img,0,0,width,height);URL.revokeObjectURL(url);
       const png=await new Promise(resolve=>canvas.toBlob(resolve,'image/png'));if(!png)throw new Error('PNG கோப்பை உருவாக்க முடியவில்லை.');
-      const link=document.createElement('a');link.href=URL.createObjectURL(png);link.download=(String(post.title||'pavizhithazh-poem').replace(/[^\\p{L}\\p{N}-]+/gu,'-').replace(/^-|-$/g,'')||'pavizhithazh-poem')+'.png';link.click();setTimeout(()=>URL.revokeObjectURL(link.href),1500);button.textContent='PNG பதிவிறக்கம் ✓';
+      const link=document.createElement('a');link.href=URL.createObjectURL(png);link.download=(String(post.title||'pavizhithazh-poem').replace(/[^\p{L}\p{N}-]+/gu,'-').replace(/^-|-$/g,'')||'pavizhithazh-poem')+'.png';link.click();setTimeout(()=>URL.revokeObjectURL(link.href),1500);button.textContent='PNG பதிவிறக்கம் ✓';
     }catch(error){alert('படத்தைப் பதிவிறக்க முடியவில்லை: '+(error.message||error));button.textContent='மீண்டும் முயற்சி';}
     finally{button.disabled=false;}
   };
@@ -1398,7 +1398,7 @@ function renderAdminPosts(){
   posts.forEach(p=>{
     const item=document.createElement('article');item.className='post-card admin-post-row';
     const title=document.createElement('h3');title.textContent=p.title;
-    const meta=document.createElement('p');const releaseLabel=/^\\d{4}-\\d{2}-\\d{2}$/.test(String(p.date||''))?formatTaDate(p.date):(p.date||'');
+    const meta=document.createElement('p');const releaseLabel=/^\d{4}-\d{2}-\d{2}$/.test(String(p.date||''))?formatTaDate(p.date):(p.date||'');
     meta.textContent=`${p.author} · ${getCategoryName(p.category)} · ${releaseLabel}`;
     const edit=document.createElement('button');edit.className='admin-secondary';edit.type='button';edit.textContent='திருத்து';
     edit.onclick=()=>{document.getElementById('editingPostId').value=p.id;document.getElementById('title').value=p.title||'';document.getElementById('author').value=p.author||'';document.getElementById('category').value=p.category||'kavithai';document.getElementById('content').value=p.content||'';document.getElementById('postSubmitBtn').textContent='மாற்றங்களைச் சேமி';document.getElementById('cancelEditBtn').hidden=false;document.getElementById('postManager').scrollIntoView({behavior:'smooth'});};
