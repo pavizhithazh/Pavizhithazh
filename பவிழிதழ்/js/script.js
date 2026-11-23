@@ -1353,7 +1353,61 @@ function upgradePublicFooter(){
   footer.replaceChildren(founder,contact,...(links?[links]:[]),legalLinks,visitor,...copyright);
 }
 function updateAdminStats(){const el=document.getElementById('adminStats');if(!el)return;const posts=getStoredPosts();const authors=new Set(posts.map(p=>p.author).filter(Boolean));el.innerHTML=`<div><strong>${posts.length}</strong><span>படைப்புகள்</span></div><div><strong>${authors.size}</strong><span>எழுத்தாளர்கள்</span></div><div><strong>${getSettingCollection('pavizhidhal_quarterly_issues').length}</strong><span>காலாண்டு இதழ்கள்</span></div><div><strong>${getSettingCollection('pavizhidhal_annual_contests').length}</strong><span>போட்டிகள்</span></div><div><strong>${getSettingCollection('pavizhidhal_certificates').length}</strong><span>சான்றிதழ்கள்</span></div>`;}
-function renderAdminPosts(){const list=document.getElementById('adminPostsList');if(!list)return;const posts=getStoredPosts();list.innerHTML=posts.length?'':'<div class="post-card">இன்னும் படைப்புகள் இல்லை.</div>';posts.forEach(p=>{const item=document.createElement('article');item.className='post-card admin-post-row';const title=document.createElement('h3');title.textContent=p.title;const meta=document.createElement('p');const releaseLabel=/^\d{4}-\d{2}-\d{2}$/.test(String(p.date||''))?formatTaDate(p.date):(p.date||'');meta.textContent=`${p.author} · ${getCategoryName(p.category)} · ${releaseLabel}`;const edit=document.createElement('button');edit.className='admin-secondary';edit.type='button';edit.textContent='திருத்து';edit.onclick=()=>{document.getElementById('editingPostId').value=p.id;document.getElementById('title').value=p.title||'';document.getElementById('author').value=p.author||'';document.getElementById('category').value=p.category||'kavithai';document.getElementById('content').value=p.content||'';document.getElementById('postSubmitBtn').textContent='மாற்றங்களைச் சேமி';document.getElementById('cancelEditBtn').hidden=false;document.getElementById('postManager').scrollIntoView({behavior:'smooth'});};const del=document.createElement('button');del.className='admin-danger';del.type='button';del.textContent='நீக்கு';del.onclick=()=>adminDeletePost(p.id);const actions=document.createElement('div');actions.className='admin-actions';actions.append(edit,del);item.append(title,meta,actions);list.appendChild(item);});updateAdminStats();}
+function openPoemPageExport(post){
+  const esc=value=>String(value??'').replace(/[&<>"']/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
+  let modal=document.getElementById('poemPageExportModal');if(modal)modal.remove();
+  const title=esc(post.title||'தலைப்பில்லா கவிதை'),author=esc(post.author||'பவிழிதழ் படைப்பாளர்');
+  const body=esc(String(post.content||'').replace(/<[^>]*>/g,' ').replace(/&nbsp;/g,' '));
+  modal=document.createElement('div');modal.id='poemPageExportModal';modal.className='poem-export-overlay';
+  modal.innerHTML=`<section class="poem-export-dialog" role="dialog" aria-modal="true" aria-label="கவிதைப் பக்க முன்னோட்டம்">
+    <div class="poem-export-toolbar"><div><strong>கவிதைப் பக்க முன்னோட்டம்</strong><p>1080 × 1350 · Instagram / Facebook</p></div>
+    <div class="admin-actions"><button type="button" class="admin-primary" id="downloadPoemPageBtn">PNG பதிவிறக்கம்</button><button type="button" class="admin-secondary" id="closePoemPageBtn">மூடு</button></div></div>
+    <div class="poem-export-preview-wrap"><article class="poem-export-page"><div class="poem-export-ornament">❧</div><p class="poem-export-brand">பவிழிதழ் · தமிழ் இலக்கிய இதழ்</p><div class="poem-export-rule"></div><h2>${title}</h2><p class="poem-export-author">${author}</p><div class="poem-export-body">${body}</div><div class="poem-export-bottom-rule"></div><p class="poem-export-footer">மரபு • புதுமை • இளமை</p></article></div>
+    <p class="poem-export-hint">பதிவிறக்குவதற்கு முன் கவிதையின் வரிகள் மற்றும் எழுத்துருவை முன்னோட்டத்தில் சரிபார்க்கவும்.</p></section>`;
+  document.body.appendChild(modal);
+  modal.querySelector('#closePoemPageBtn').onclick=()=>modal.remove();
+  modal.addEventListener('click',event=>{if(event.target===modal)modal.remove();});
+  modal.querySelector('#downloadPoemPageBtn').onclick=async()=>{
+    const button=modal.querySelector('#downloadPoemPageBtn');button.disabled=true;button.textContent='படம் தயாராகிறது…';
+    try{
+      if(document.fonts?.ready)await document.fonts.ready;
+      const width=1080,height=1350;
+      const bodySize=String(post.content||'').length>900?32:String(post.content||'').length>600?38:String(post.content||'').length>350?44:50;
+      const xhtml='<div xmlns="http://www.w3.org/1999/xhtml" style="width:1080px;height:1350px;box-sizing:border-box;padding:82px 88px;background:#f4e8ce;color:#38291e;font-family:Noto Serif Tamil,Latha,serif;text-align:center;position:relative;overflow:hidden;">'+
+        '<div style="position:absolute;inset:24px;border:3px double #a77b36;"></div>'+
+        '<div style="font-size:58px;color:#a77b36;line-height:1.1;margin:8px 0 20px;">❧</div>'+
+        '<div style="font-size:28px;letter-spacing:5px;color:#762b32;font-weight:700;">பவிழிதழ் · தமிழ் இலக்கிய இதழ்</div>'+
+        '<div style="height:2px;background:#a77b36;width:250px;margin:30px auto 42px;"></div>'+
+        '<div style="font-size:54px;font-weight:700;color:#762b32;line-height:1.5;margin-bottom:14px;">'+title+'</div>'+
+        '<div style="font-size:31px;color:#745b43;margin-bottom:48px;">'+author+'</div>'+
+        '<div style="font-size:'+bodySize+'px;line-height:1.9;white-space:pre-wrap;text-align:center;overflow-wrap:anywhere;">'+body+'</div>'+
+        '<div style="position:absolute;bottom:76px;left:0;right:0;font-size:25px;color:#762b32;letter-spacing:4px;">மரபு • புதுமை • இளமை</div></div>';
+      const svg='<svg xmlns="http://www.w3.org/2000/svg" width="'+width+'" height="'+height+'"><foreignObject width="100%" height="100%">'+xhtml+'</foreignObject></svg>';
+      const svgBlob=new Blob([svg],{type:'image/svg+xml;charset=utf-8'}),url=URL.createObjectURL(svgBlob),img=new Image();
+      await new Promise((resolve,reject)=>{img.onload=resolve;img.onerror=()=>reject(new Error('படத்தை உருவாக்க முடியவில்லை.'));img.src=url;});
+      const canvas=document.createElement('canvas');canvas.width=width;canvas.height=height;canvas.getContext('2d').drawImage(img,0,0,width,height);URL.revokeObjectURL(url);
+      const png=await new Promise(resolve=>canvas.toBlob(resolve,'image/png'));if(!png)throw new Error('PNG கோப்பை உருவாக்க முடியவில்லை.');
+      const link=document.createElement('a');link.href=URL.createObjectURL(png);link.download=(String(post.title||'pavizhithazh-poem').replace(/[^\\p{L}\\p{N}-]+/gu,'-').replace(/^-|-$/g,'')||'pavizhithazh-poem')+'.png';link.click();setTimeout(()=>URL.revokeObjectURL(link.href),1500);button.textContent='PNG பதிவிறக்கம் ✓';
+    }catch(error){alert('படத்தைப் பதிவிறக்க முடியவில்லை: '+(error.message||error));button.textContent='மீண்டும் முயற்சி';}
+    finally{button.disabled=false;}
+  };
+}
+function renderAdminPosts(){
+  const list=document.getElementById('adminPostsList');if(!list)return;const posts=getStoredPosts();
+  list.innerHTML=posts.length?'':'<div class="post-card">இன்னும் படைப்புகள் இல்லை.</div>';
+  posts.forEach(p=>{
+    const item=document.createElement('article');item.className='post-card admin-post-row';
+    const title=document.createElement('h3');title.textContent=p.title;
+    const meta=document.createElement('p');const releaseLabel=/^\\d{4}-\\d{2}-\\d{2}$/.test(String(p.date||''))?formatTaDate(p.date):(p.date||'');
+    meta.textContent=`${p.author} · ${getCategoryName(p.category)} · ${releaseLabel}`;
+    const edit=document.createElement('button');edit.className='admin-secondary';edit.type='button';edit.textContent='திருத்து';
+    edit.onclick=()=>{document.getElementById('editingPostId').value=p.id;document.getElementById('title').value=p.title||'';document.getElementById('author').value=p.author||'';document.getElementById('category').value=p.category||'kavithai';document.getElementById('content').value=p.content||'';document.getElementById('postSubmitBtn').textContent='மாற்றங்களைச் சேமி';document.getElementById('cancelEditBtn').hidden=false;document.getElementById('postManager').scrollIntoView({behavior:'smooth'});};
+    const actions=document.createElement('div');actions.className='admin-actions';
+    if(p.category==='kavithai'){const exportBtn=document.createElement('button');exportBtn.className='admin-primary';exportBtn.type='button';exportBtn.textContent='புத்தகப் பக்கமாக உருவாக்கு';exportBtn.onclick=()=>openPoemPageExport(p);actions.appendChild(exportBtn);}
+    const del=document.createElement('button');del.className='admin-danger';del.type='button';del.textContent='நீக்கு';del.onclick=()=>adminDeletePost(p.id);
+    actions.append(edit,del);item.append(title,meta,actions);list.appendChild(item);
+  });updateAdminStats();
+}
 
 function renderAdminComments(){const box=document.getElementById('adminCommentsList');if(!box)return;const posts=getStoredPosts();let rows=[];posts.forEach(post=>{const comments=safeParseJSON(localStorage.getItem(`pavizhidhal_comments_${post.id}`),[]);comments.forEach(c=>rows.push({post,c}));});if(!rows.length){box.innerHTML='<div class="post-card">கருத்துகள் இன்னும் இல்லை.</div>';return;}box.innerHTML='';rows.forEach(({post,c})=>{const row=document.createElement('div');row.className='post-card admin-post-row';const p=document.createElement('p');p.textContent=`${c.userName}: ${c.text} · ${post.title}`;const actions=document.createElement('div');actions.className='admin-actions';if(!c.approved){const approve=document.createElement('button');approve.className='admin-primary';approve.textContent='கருத்தை அனுமதி';approve.onclick=async()=>{try{await PaviDB.approveComment(c.id);await PaviDB.loadComments();renderAdminComments();alert('கருத்து வெளியிட அனுமதிக்கப்பட்டது.');}catch(e){alert('அனுமதி வழங்க முடியவில்லை: '+(e.message||e));}};actions.appendChild(approve);}const b=document.createElement('button');b.className='admin-danger';b.textContent='கருத்தை நீக்கு';b.onclick=()=>deleteComment(post.id,c.id);actions.appendChild(b);row.append(p,actions);box.appendChild(row);});}
 async function adminDeletePost(id) {
