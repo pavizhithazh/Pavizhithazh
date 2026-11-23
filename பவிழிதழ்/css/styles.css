@@ -764,3 +764,11 @@ header{position:relative}
 .archive-issue-details dd{margin:0;font-weight:600;overflow-wrap:anywhere}
 .archive-issue-actions{display:flex;flex-wrap:wrap;align-items:center;gap:10px;margin-top:14px}
 @media(max-width:560px){.archive-issue-details{grid-template-columns:1fr 1fr;gap:8px}.archive-issue-details dt{font-size:.72rem}}
+
+
+/* Pavizhithazh Adsterra placement styling */
+.pavizhithazh-adsterra-slot{display:flex;justify-content:center;align-items:center;box-sizing:border-box;width:100%;max-width:100%;min-height:58px;margin:24px auto;padding:8px 10px;clear:both;overflow:hidden;text-align:center}
+.pavizhithazh-adsterra-frame{display:block;max-width:100%;margin:0 auto;overflow:hidden;line-height:0;text-align:center}
+.pavizhithazh-adsterra-frame iframe{max-width:100%;border:0}
+@media(max-width:767px){.pavizhithazh-adsterra-slot{margin:16px auto;padding:6px 4px;min-height:54px}.pavizhithazh-adsterra-frame{width:100%}}
+@media print{.pavizhithazh-adsterra-slot{display:none!important}}
